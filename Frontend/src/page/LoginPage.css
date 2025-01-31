@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.signin-main{
+    background-color: #222831;
+    height: 100vh;
+}
+
+.sign-title{
+    position: relative;
+    top: -20px;
+    color: #222831;
+}
+
+.signin-box{
+    background-color: #FFFFFF;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: #C2C2C2 solid 1px;
+    padding: 5%;
+    border-radius: 20px;
+    width: 499px;
+    height: 530px;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+}
+
+.signin-input{
+    width: 350px;
+    height: 60px;
+    border: #222831 solid 1px;
+    border-radius: 10px;
+    padding-left: 1rem;
+    /* margin-bottom: 1rem; */
+    margin-top: 1rem;
+}
+
+.signin-btn{
+    cursor: pointer;
+    width: 350px;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    background-color: #00ADB5;
+    margin-top: 1rem;
+}
+
+.signin-separate1{
+    margin-top: 1rem;
+}
+
+.signin-separate1 a{
+    color: #00ADB5;
+}
+
+.signin-separate2{
+    margin-top: 1rem;
+    width: 320px; 
+    text-align: center;
+}
+
+.signin-separate2 .signin-hr1{
+    position: relative;
+    left: -95px;
+}
+
+.signin-separate2 .signin-hr2{
+    position: relative;
+    left: 95px;
+    top: -1px;
+}
+
+.signin-separate2 p{
+    position: relative;
+    top: -12px;
+    background-color: #FFFFFF;
+    width: 12px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.signin-google{
+    width: 350px;
+    height: 45px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 1rem;
+}
