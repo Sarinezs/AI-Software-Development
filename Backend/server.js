@@ -8,10 +8,12 @@ const bcrypt = require('bcrypt')
 
 const app = express()
 app.use(express.json())
-app.use(cors({
-    credentials: true,
-    origin: ['http://localhost:8000']
-}))
+app.use(cors(
+    {
+        credentials: true,
+        origin: ['http://localhost:5173']
+    }
+))
 app.use(cookieParser())
 
 app.use(session({
@@ -37,7 +39,7 @@ const connectMySQL = async () => {
         text = 'Connected to MySQL!'
         console.log('Connected to MySQL!');
     } catch (err) {
-        text = 'Error connecting to MySQL:'+err
+        text = 'Error connecting to MySQL:' + err
         console.error('Error connecting to MySQL:', err);
     }
 }
@@ -46,15 +48,81 @@ app.get('/', (req, res) => {
     res.send(text)
 })
 app.get('/user', async (req, res) => {
-    const [results] = await conn.query('SELECT * FROM user')
-    res.json(results)
+    try {
+        const authheader = req.headers['authorization']
+        let authtoken = ''
+        if(authheader) {
+            authtoken = authheader.split(' ')[1]
+        }
+        console.log(authtoken)
+        const user = jwt.verify(authtoken, secret)
+        console.log(user)
+        const [results] = await conn.query('SELECT * FROM user')
+        res.json({
+            users: results
+        })
+    } catch (error) {
+        console.log('error', error)
+        res.status(403).json({
+            message: 'autehntication fail',
+            error
+        })
+    }
 })
 
-app.get('/test', (req, res) => {
-    res.json({ message: 'test' })
+app.post('/register', async (req, res) => {
+    try {
+        const { username, email, password } = req.body
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const userdata = {
+            username,
+            email,
+            password: hashedPassword
+        }
+        const [result] = await conn.query('INSERT INTO user set ? ', userdata)
+        res.json({
+            message: 'insert success',
+            result
+        })
+    } catch (error) {
+        console.log('error', error)
+        res.json({
+            message: "insert error",
+            error
+        })
+    }
 })
 
+app.post('/login', async (req, res) => {
+    try {
+        const {email, password} = req.body
+        const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
+        const userdata = result[0]
+        const match = await bcrypt.compare(password, userdata.password)
+        if(!match) {
+            res.status(400).json({
+                message: "login failed"
+            })
+            return false
+        }
+
+        // สร้าง jwt token 
+        const token = jwt.sign({email, role: 'admin'}, secret, { expiresIn: "1h"})
+
+
+        res.json({
+            message: "login success",
+            token
+        })
+    }catch(error) {
+        console.log('error555')
+        res.status(401).json({
+            message: 'login falied',
+            error
+        })
+    }
+})
 app.listen(port, async () => {
     await connectMySQL()
-    console.log('Server running at http://localhost:'+port)
+    console.log('Server running at http://localhost:' + port)
 })
