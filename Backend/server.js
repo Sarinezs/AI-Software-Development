@@ -99,9 +99,9 @@ app.post('/login', async (req, res) => {
         const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
         const userdata = result[0]
         const match = await bcrypt.compare(password, userdata.password)
-        if(!match) {
+        if(!match) { // รหัสตรงกันไหม
             res.status(400).json({
-                message: "login failed"
+                message: "login failed1"
             })
             return false
         }
@@ -110,12 +110,12 @@ app.post('/login', async (req, res) => {
         const token = jwt.sign({email, role: 'admin'}, secret, { expiresIn: "1h"})
 
 
-        res.json({
+        res.status(200).json({
             message: "login success",
             token
         })
     }catch(error) {
-        console.log('error555')
+        console.log('login error')
         res.status(401).json({
             message: 'login falied',
             error

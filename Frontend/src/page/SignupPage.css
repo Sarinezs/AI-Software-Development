@@ -4,18 +4,18 @@
     box-sizing: border-box;
 }
 
-.signin-main{
+.signup-main{
     background-color: #222831;
     height: 100vh;
 }
 
-.signin-title{
+.signup-title{
     position: relative;
     top: -20px;
     color: #222831;
 }
 
-.signin-box{
+.signup-box{
     background-color: #FFFFFF;
     position: absolute;
     display: flex;
@@ -25,23 +25,23 @@
     padding: 5%;
     border-radius: 20px;
     width: 499px;
-    height: 530px;
+    height: 600px;
     top: 50%; 
     left: 50%; 
     transform: translate(-50%, -50%);
 }
 
-.signin-input{
+.signup-input{
     width: 350px;
-    height: 60px;
+    height: 55px;
     border: #222831 solid 1px;
     border-radius: 10px;
     padding-left: 1rem;
     /* margin-bottom: 1rem; */
-    margin-top: 1rem;
+    margin-top: 10px;
 }
 
-.signin-btn{
+.signup-btn{
     cursor: pointer;
     width: 350px;
     height: 50px;
@@ -51,33 +51,33 @@
     margin-top: 1rem;
 }
 
-.signin-separate1{
+.signup-separate1{
     margin-top: 1rem;
 }
 
-.signin-separate1 a{
+.signup-separate1 a{
     color: #00ADB5;
     text-decoration: none;
 }
 
-.signin-separate2{
+.signup-separate2{
     margin-top: 1rem;
     width: 320px; 
     text-align: center;
 }
 
-.signin-separate2 .signin-hr1{
+.signup-separate2 .signup-hr1{
     position: relative;
     left: -95px;
 }
 
-.signin-separate2 .signin-hr2{
+.signup-separate2 .signup-hr2{
     position: relative;
     left: 95px;
     top: -1px;
 }
 
-.signin-separate2 p{
+.signup-separate2 p{
     position: relative;
     top: -12px;
     background-color: #FFFFFF;
@@ -86,7 +86,7 @@
     margin-right: auto;
 }
 
-.signin-google{
+.signup-google{
     width: 350px;
     height: 45px;
     border: none;

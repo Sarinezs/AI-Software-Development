@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import LoginPage from './page/LoginPage'
+import SignupPage from './page/SignupPage'
 
 
 function App() {
@@ -34,7 +35,8 @@ function App() {
 			<button onClick={fetchUsers}> click me </button>
 			<button onClick={logIn}> login </button> */}
 
-			<LoginPage />
+			{/* <LoginPage /> */}
+			<SignupPage />
 		</>
 	)
 }

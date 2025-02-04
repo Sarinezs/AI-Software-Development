@@ -3,24 +3,17 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login'
 import { Link } from 'react-router-dom'
 import { gapi } from 'gapi-script'
 import axios from 'axios'
-import './LoginPage.css'
+import './SignupPage.css'
 
-const LoginPage = () => {
+const SignupPage = () => {
 
     const clientId = "11247620455-hdn7a4bois1qleisef5aaobjaq9ijd2v.apps.googleusercontent.com"
     const [profile, setProfile] = useState(null)
     const [userdata, setUserdata] = useState({
+        username: '',
         email: '',
         password: '',
     })
-
-    const signinhandlechange = (event) => {
-        setUserdata(prevstate => ({
-           ...prevstate,
-            [event.target.name]: event.target.value
-        }))
-        // console.log(userdata)
-    }
 
     useEffect(() => {
         const initClient = () => {
@@ -56,43 +49,52 @@ const LoginPage = () => {
         console.log('failed', res)
     }
 
+    const fetchUsers = async () => {
+        try {
+            const authtoken = localStorage.getItem('token')
+            const response = await axios.get('http://localhost:8000/user', {
+                headers: {
+                    'authorization': `Bearer ${authtoken}`
+                }
+            });
+            console.log(response.data.users[4].email); // อัปเดต state users ด้วยข้อมูลที่ได้จาก API
+        } catch (err) {
+            console.error('Error fetching users:', err);
+        }
+    };
 
     const logIn = async () => {
         try {
-            if (!userdata.password) { // กรณีไม่ใส่รหัสผ่าน
-                console.log("can't login")
-                return
-            }
-            else {
-                
-                const list = await axios.post("http://localhost:8000/login", {
-                    email: userdata.email,
-                    password: userdata.password,
-                })
-                localStorage.setItem('token', list.data.token)
-                console.log('success', list.status);
-            }
 
-
+            const list = await axios.post("http://localhost:8000/login", {
+                email: "arm50@mail.com",
+                password: "12345",
+            });
+            localStorage.setItem('token', list.data.token)
+            console.log('success', list);
         } catch (error) {
             console.error('Error during registration:', error);
         }
     }
 
+    const logOut = () => {
+        setProfile(null)
+    }
 
     return (
-        <div className='signin-main'>
-            <div className='signin-box'>
-                <h1 className='signin-title'>Sign In</h1>
-                <input className='signin-input' onChange={signinhandlechange} name='email' type="text" placeholder='Email' />
-                <input className='signin-input' onChange={signinhandlechange} name='password' type="password" placeholder='Password' />
-                <button className='signin-btn' onClick={logIn}>Sign In</button>
-                <p className='signin-separate1'>Don't have an account? <Link to="/">Sign Up</Link></p>
-                <div className='signin-separate2'>
+        <div className='signup-main'>
+            <div className='signup-box'>
+                <h1 className='signup-title'>Sign Up</h1>
+                <input className='signup-input' type="text" placeholder='Email' />
+                <input className='signup-input' type="password" placeholder='Password' />
+                <input className='signup-input' type="password" placeholder='Confirm Password' />
+                <button className='signup-btn'>Sign Up</button>
+                <p className='signup-separate1'>Already have an account? <Link to="/signin">Sign In</Link></p>
+                <div className='signup-separate2'>
                     <hr />
                     <p>or</p>
                 </div>
-                <div className='signin-google'>
+                <div className='signup-google'>
                     <GoogleLogin
                         clientId={clientId}
                         onSuccess={onsuccess}
@@ -129,4 +131,4 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+export default SignupPage
