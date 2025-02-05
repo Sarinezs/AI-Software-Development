@@ -64,7 +64,7 @@ app.get('/user', async (req, res) => {
     } catch (error) {
         console.log('error', error)
         res.status(403).json({
-            message: 'autehntication fail',
+            message: 'authentication fail',
             error
         })
     }
@@ -73,11 +73,19 @@ app.get('/user', async (req, res) => {
 app.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body
-        const hashedPassword = await bcrypt.hash(password, 10)
+        let hashedPassword = await bcrypt.hash(password, 10)
         const userdata = {
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: 'user',
+        }
+        const [ismember] = await conn.query('SELECT * FROM user WHERE email = ?', email)
+        if(ismember.length !== 0){
+            res.json({
+                message: "email already exists"
+            })
+            return false;
         }
         const [result] = await conn.query('INSERT INTO user set ? ', userdata)
         res.json({

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { GoogleLogin, GoogleLogout } from 'react-google-login'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { gapi } from 'gapi-script'
 import axios from 'axios'
 import './LoginPage.css'
@@ -13,6 +13,8 @@ const LoginPage = () => {
         email: '',
         password: '',
     })
+
+    const navigate = useNavigate()
 
     const signinhandlechange = (event) => {
         setUserdata(prevstate => ({
@@ -32,7 +34,7 @@ const LoginPage = () => {
         gapi.load("client:auth2", initClient)
     }, [])
 
-    const onsuccess = async (res) => {
+    const gg_Login = async (res) => {
         setProfile(res.profileObj)
         setUserdata(prevstate => ({
             ...prevstate,
@@ -46,9 +48,10 @@ const LoginPage = () => {
         };
         try {
             const list = await axios.post("http://localhost:8000/register", payload);
-            console.log('success', list);
+            navigate('/Dashboard')
+            console.log(list.data);
         } catch (error) {
-            console.error('Error during registration:', error);
+            console.error('Error during registration:', error.message);
         }
     }
 
@@ -61,6 +64,7 @@ const LoginPage = () => {
         try {
             if (!userdata.password) { // กรณีไม่ใส่รหัสผ่าน
                 console.log("can't login")
+                alert("email and password are required")
                 return
             }
             else {
@@ -70,12 +74,14 @@ const LoginPage = () => {
                     password: userdata.password,
                 })
                 localStorage.setItem('token', list.data.token)
-                console.log('success', list.status);
+                // console.log('success', list.status);
+                navigate('/Dashboard')
             }
 
 
         } catch (error) {
-            console.error('Error during registration:', error);
+            alert("wrong email or password")
+            // console.error('Error during login:');
         }
     }
 
@@ -95,7 +101,7 @@ const LoginPage = () => {
                 <div className='signin-google'>
                     <GoogleLogin
                         clientId={clientId}
-                        onSuccess={onsuccess}
+                        onSuccess={gg_Login}
                         onFailure={onfailure}
                         cookiePolicy={'single_host_origin'}
                         render={renderProps => (
