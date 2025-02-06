@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider, Route, Link } from 'react-router-d
 import LoginPage from './page/LoginPage.jsx'
 import SignupPage from './page/SignupPage.jsx'
 import Dashboard from './page/Dashboard.jsx'
+import Robot from './page/Robot.jsx'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: '/Dashboard',
     element: <Dashboard />
+  },
+  {
+    path: '/Robot',
+    element: <Robot />
   },
 ])
 

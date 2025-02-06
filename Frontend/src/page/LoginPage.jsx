@@ -18,7 +18,7 @@ const LoginPage = () => {
 
     const signinhandlechange = (event) => {
         setUserdata(prevstate => ({
-           ...prevstate,
+            ...prevstate,
             [event.target.name]: event.target.value
         }))
         // console.log(userdata)
@@ -44,21 +44,26 @@ const LoginPage = () => {
         const payload = {
             username: res.profileObj.name,
             email: res.profileObj.email,
-            password: userdata.password, // ใช้ password จาก state
+            password: userdata.password,
+            confirm_password: userdata.password // ใช้ password จาก state
         };
         try {
-            const list = await axios.post("http://localhost:8000/register", payload);
-            navigate('/Dashboard')
-            console.log(list.data);
+            await axios.post("http://localhost:8000/register", payload).then(async () => {
+                const list = await axios.post("http://localhost:8000/login", {
+                    email: payload.email,
+                    password: payload.password,
+                })
+                const role = list.data.role
+                if (role === "user") {
+                    localStorage.setItem('token', list.data.token)
+                    navigate('/Dashboard')
+                }
+
+            })
         } catch (error) {
             console.error('Error during registration:', error.message);
         }
     }
-
-    const onfailure = (res) => {
-        console.log('failed', res)
-    }
-
 
     const logIn = async () => {
         try {
@@ -68,20 +73,21 @@ const LoginPage = () => {
                 return
             }
             else {
-                
+
                 const list = await axios.post("http://localhost:8000/login", {
                     email: userdata.email,
                     password: userdata.password,
                 })
-                localStorage.setItem('token', list.data.token)
-                // console.log('success', list.status);
-                navigate('/Dashboard')
+                const role = list.data.role
+                if (role === "user") {
+                    localStorage.setItem('token', list.data.token)
+                    navigate('/Dashboard')
+                }
             }
 
 
         } catch (error) {
             alert("wrong email or password")
-            // console.error('Error during login:');
         }
     }
 
@@ -102,7 +108,6 @@ const LoginPage = () => {
                     <GoogleLogin
                         clientId={clientId}
                         onSuccess={gg_Login}
-                        onFailure={onfailure}
                         cookiePolicy={'single_host_origin'}
                         render={renderProps => (
                             <>

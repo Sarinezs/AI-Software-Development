@@ -1,14 +1,12 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-
-const Dashboard = () => {
+const Robot = () => {
   return (
-
     <div>
-      <Navbar />
-      <h1>Dashboard page</h1>
+        <Navbar />
+        <h1>Robot Page</h1>
     </div>
   )
 }
 
-export default Dashboard
+export default Robot

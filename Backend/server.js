@@ -54,9 +54,9 @@ app.get('/user', async (req, res) => {
         if(authheader) {
             authtoken = authheader.split(' ')[1]
         }
-        console.log(authtoken)
+        // console.log(authtoken)
         const user = jwt.verify(authtoken, secret)
-        console.log(user)
+        // console.log(user)
         const [results] = await conn.query('SELECT * FROM user')
         res.json({
             users: results
@@ -72,7 +72,13 @@ app.get('/user', async (req, res) => {
 
 app.post('/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body
+        const { username, email, password, confirm_password } = req.body
+        if(password !== confirm_password){
+            res.json({
+                message: "password not match"
+            })
+            return false;
+        }
         let hashedPassword = await bcrypt.hash(password, 10)
         const userdata = {
             username,
@@ -115,13 +121,16 @@ app.post('/login', async (req, res) => {
         }
 
         // สร้าง jwt token 
-        const token = jwt.sign({email, role: 'admin'}, secret, { expiresIn: "1h"})
+        const token = jwt.sign({email, role: 'user'}, secret, { expiresIn: "1h"})
 
 
         res.status(200).json({
             message: "login success",
-            token
+            token,
+            role: userdata.role
+            
         })
+
     }catch(error) {
         console.log('login error')
         res.status(401).json({
