@@ -7,6 +7,7 @@ const session = require('express-session')
 const bcrypt = require('bcrypt')
 
 const UserRoutes = require('./Routes/UserRoutes')
+const conn = require('./DB')
 
 const app = express()
 app.use(express.json())
@@ -27,52 +28,53 @@ app.use(session({
 const port = 8000
 const secret = 'mysecret'
 
-let conn = null
-var text = ''
+// let conn = null
+// var text = ''
 
-const connectMySQL = async () => {
-    try {
-        conn = await mysql.createConnection({
-            host: 'localhost', // docker : db
-            user: 'root',
-            password: 'root',
-            database: 'test',
-        });
-        text = 'Connected to MySQL!'
-        console.log('Connected to MySQL!');
-    } catch (err) {
-        text = 'Error connecting to MySQL:' + err
-        console.error('Error connecting to MySQL:', err);
-    }
-}
+// const connectMySQL = async () => {
+//     try {
+//         conn = await mysql.createConnection({
+//             host: 'localhost', // docker : db
+//             user: 'root',
+//             password: 'root',
+//             database: 'test',
+//         });
+//         text = 'Connected to MySQL!'
+//         console.log('Connected to MySQL!');
+//     } catch (err) {
+//         text = 'Error connecting to MySQL:' + err
+//         console.error('Error connecting to MySQL:', err);
+//     }
+// }
+
 
 app.get('/', (req, res) => {
     res.send(text)
 })
-app.get('/user', async (req, res) => {
-    try {
-        const authheader = req.headers['authorization']
-        let authtoken = ''
-        if (authheader) {
-            authtoken = authheader.split(' ')[1]
-        }
-        // console.log(authtoken)
-        const user = jwt.verify(authtoken, secret)
-        // console.log(user)
-        const [results] = await conn.query('SELECT * FROM user')
-        res.json({
-            users: results
-        })
-    } catch (error) {
-        console.log('error', error)
-        res.status(403).json({
-            message: 'authentication fail',
-            error
-        })
-    }
-})
+// app.get('/user', async (req, res) => {
+//     try {
+//         const authheader = req.headers['authorization']
+//         let authtoken = ''
+//         if (authheader) {
+//             authtoken = authheader.split(' ')[1]
+//         }
+//         // console.log(authtoken)
+//         const user = jwt.verify(authtoken, secret)
+//         // console.log(user)
+//         const [results] = await conn.query('SELECT * FROM user')
+//         res.json({
+//             users: results
+//         })
+//     } catch (error) {
+//         console.log('error', error)
+//         res.status(403).json({
+//             message: 'authentication fail',
+//             error
+//         })
+//     }
+// })
 
-// app.use('/user', UserRoutes)
+app.use('/user', UserRoutes)
 
 app.post('/register', async (req, res) => {
     try {
@@ -149,7 +151,7 @@ app.post('/api/verify-token', async (req, res) => {
         console.log(req.body)
         res.status(200).json(req.body)
     } catch (error) {
-        console.log("verify token error",error)
+        console.log("verify token error", error)
     }
 })
 
@@ -182,6 +184,7 @@ app.post('/api/get-history', async (req, res) => {
     }
 })
 app.listen(port, async () => {
-    await connectMySQL()
+    // await connectMySQL()
+    // console.log(db)
     console.log('Server running at http://localhost:' + port)
 })

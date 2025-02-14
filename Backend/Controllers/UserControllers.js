@@ -1,3 +1,8 @@
+const conn = require('../DB')
+
+const jwt = require('jsonwebtoken')
+
+const secret = 'mysecret'
 
 exports.getUser = async (req, res) => {
     try {
