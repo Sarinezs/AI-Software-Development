@@ -185,6 +185,5 @@ app.post('/api/get-history', async (req, res) => {
 })
 app.listen(port, async () => {
     // await connectMySQL()
-    // console.log(db)
     console.log('Server running at http://localhost:' + port)
 })
