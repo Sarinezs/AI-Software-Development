@@ -9,7 +9,7 @@ print("✅ ZeroMQ Server Started...")
 
 while True:
     message = socket.recv_string()  # รับข้อความจาก MT5
-    print(f"📩 Message from MT5: {message}")
+    print(f"📩 Message from MT5: {message.index}")
     
     response = "Received: " + message  # ส่งกลับ
     socket.send_string(response)

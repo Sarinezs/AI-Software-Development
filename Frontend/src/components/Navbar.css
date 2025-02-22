@@ -1,8 +1,8 @@
-*{
+* {
     text-decoration: none;
 }
 
-.navbar{
+.navbar {
     height: 70px;
     display: flex;
     justify-content: space-between;
@@ -11,48 +11,49 @@
     padding-right: 8%;
 }
 
-.nav-logo{
+.nav-logo {
     cursor: pointer;
     display: flex;
     align-items: center;
     color: #ffffff;
 }
 
-.nav-logo img{
+.nav-logo img {
     width: 50px;
     height: 50px;
 }
 
-.nav-menu{
+.nav-menu {
     display: flex;
     align-items: center;
     color: #ffffff;
 }
 
-.nav-menu ul{
+.nav-menu ul {
     display: flex;
     align-items: center;
-    
+
 }
 
-.nav-menu ul a{
+.nav-menu ul a {
     color: #ffffff;
-    text-decoration: none;
     cursor: pointer;
     margin: 1rem;
 }
 
-.nav-user{
+.nav-user {
     cursor: pointer;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     color: #ffffff;
+    position: relative;
 }
 
 .nav-user img {
-    width:  43px;
+    position: relative;
+    width: 43px;
     height: 43px;
     background-color: #ffffff;
     border-radius: 50px;
-    overflow: hi;
 }

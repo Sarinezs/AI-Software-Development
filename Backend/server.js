@@ -5,8 +5,16 @@ const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const bcrypt = require('bcrypt')
+const { v4: uuidv4 } = require("uuid");
+
+require('dotenv').config();
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 
 const UserRoutes = require('./Routes/UserRoutes')
+const AuthRoutes = require('./Routes/AuthRoutes')
+const MT5Routes = require('./Routes/MT5Routes')
 const conn = require('./DB')
 
 const app = express()
@@ -48,9 +56,6 @@ const secret = 'mysecret'
 // }
 
 
-app.get('/', (req, res) => {
-    res.send(text)
-})
 // app.get('/user', async (req, res) => {
 //     try {
 //         const authheader = req.headers['authorization']
@@ -75,72 +80,118 @@ app.get('/', (req, res) => {
 // })
 
 app.use('/user', UserRoutes)
+app.use('/auth', AuthRoutes)
+app.use('/MT5', MT5Routes)
 
-app.post('/register', async (req, res) => {
+
+// app.post('/register', async (req, res) => {
+//     try {
+//         const { username, email, password, confirm_password } = req.body
+//         if (password !== confirm_password) {
+//             res.json({
+//                 message: "password not match"
+//             })
+//             return false;
+//         }
+//         let hashedPassword = await bcrypt.hash(password, 10)
+//         const userdata = {
+//             username,
+//             email,
+//             password: hashedPassword,
+//             role: 'user',
+//         }
+//         const [ismember] = await conn.query('SELECT * FROM user WHERE email = ?', email)
+//         if (ismember.length !== 0) {
+//             res.json({
+//                 message: "email already exists"
+//             })
+//             return false;
+//         }
+//         const [result] = await conn.query('INSERT INTO user set ? ', userdata)
+//         res.json({
+//             message: 'insert success',
+//             result
+//         })
+//     } catch (error) {
+//         console.log('error', error)
+//         res.json({
+//             message: "insert error",
+//             error
+//         })
+//     }
+// })
+
+// app.post('/login', async (req, res) => {
+//     try {
+//         const { email, password } = req.body
+//         const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
+//         const userdata = result[0]
+//         const match = await bcrypt.compare(password, userdata.password)
+//         if (!match) { // รหัสตรงกันไหม
+//             res.status(400).json({
+//                 message: "login failed1"
+//             })
+//             return false
+//         }
+
+//         // สร้าง jwt token 
+//         let token = ""
+//         if (userdata.role === "admin") {
+//             token = jwt.sign({  user_id: userdata.user_id,
+//                                 username: userdata.username,
+//                                 email,
+//                                 role: 'admin' 
+//                              },
+//                             secret, 
+//                             { expiresIn: "1h" })
+//             // console.log('user data', userdata)
+//         }
+//         else { // user
+//             token = jwt.sign({  user_id: userdata.user_id,
+//                 username: userdata.username,
+//                 email,
+//                 role: 'user' 
+//              },
+//             secret, 
+//             { expiresIn: "1h" })
+//         }
+
+
+//         res.status(200).json({
+//             message: "login success",
+//             token,
+//             role: userdata.role
+
+//         })
+
+//     } catch (error) {
+//         console.log('login error', error)
+//         res.status(401).json({
+//             message: 'login falied',
+//             error
+//         })
+//     }
+// })
+
+app.post('/logout', async (req, res) => {
     try {
-        const { username, email, password, confirm_password } = req.body
-        if (password !== confirm_password) {
-            res.json({
-                message: "password not match"
-            })
-            return false;
-        }
-        let hashedPassword = await bcrypt.hash(password, 10)
-        const userdata = {
-            username,
-            email,
-            password: hashedPassword,
-            role: 'user',
-        }
-        const [ismember] = await conn.query('SELECT * FROM user WHERE email = ?', email)
-        if (ismember.length !== 0) {
-            res.json({
-                message: "email already exists"
-            })
-            return false;
-        }
-        const [result] = await conn.query('INSERT INTO user set ? ', userdata)
-        res.json({
-            message: 'insert success',
-            result
-        })
+        req.session.destroy(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    message: "Failed to destroy session"
+                });
+            } else {
+                res.clearCookie('connect.sid');
+                res.status(200).json({
+                    message: "logout success"
+                });
+            }
+        });
     } catch (error) {
-        console.log('error', error)
-        res.json({
-            message: "insert error",
-            error
-        })
-    }
-})
-
-app.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body
-        const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
-        const userdata = result[0]
-        const match = await bcrypt.compare(password, userdata.password)
-        if (!match) { // รหัสตรงกันไหม
-            res.status(400).json({
-                message: "login failed1"
-            })
-            return false
-        }
-
-        // สร้าง jwt token 
-        const token = jwt.sign({ email, role: 'user' }, secret, { expiresIn: "1h" })
-
-
-        res.status(200).json({
-            message: "login success",
-            token,
-            role: userdata.role
-
-        })
-
-    } catch (error) {
-        console.log('login error')
-        res.status(401).json({
-            message: 'login falied',
+        console.log('logout error', error)
+        res.status(500).json({
+            message: 'logout failed',
             error
         })
     }
@@ -177,13 +228,45 @@ app.get("/api/get-selected-model", async (req, res) => {
 
 app.post('/api/get-history', async (req, res) => {
     try {
-        console.log(req.body)
+        // console.log(req.body)
         res.json(req.body)
     } catch (error) {
         console.log("get-history error", error)
     }
 })
+
+// ระบบจ่ายเงิน
+app.post('/api/checkout', async (req, res) => {
+    const { user, product } = req.body
+    try {
+        const orderId = uuidv4();
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [
+                {
+                    price_data: {
+                        currency: "thb",
+                        product_data: {
+                            name: product.name,
+                        },
+                        unit_amount: product.price * 100,
+                    },
+                    quantity: product.quantity,
+                },
+            ],
+            mode: "payment",
+            success_url: `http://localhost:5173/Dashboard`,
+            cancel_url: `http://localhost:8888/cancel.html?id=${orderId}`,
+        });
+
+        console.log(session)
+        res.json(req.body)
+    } catch (error) {
+        console.log("error")
+    }
+})
 app.listen(port, async () => {
     // await connectMySQL()
+    // console.log(conn)
     console.log('Server running at http://localhost:' + port)
 })

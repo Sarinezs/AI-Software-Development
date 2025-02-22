@@ -50,8 +50,8 @@ const SignupPage = () => {
             confirm_password: userdata.password // ใช้ password จาก state
         };
         try {
-            await axios.post("http://localhost:8000/register", payload).then(async () => {
-                const list = await axios.post("http://localhost:8000/login", {
+            await axios.post("http://localhost:8000/auth/register", payload).then(async () => {
+                const list = await axios.post("http://localhost:8000/auth/login", {
                     email: payload.email,
                     password: payload.password,
                 })
@@ -75,7 +75,7 @@ const SignupPage = () => {
             }
             if (is_email(userdata.email)) {
                 if (userdata.password === userdata.confirm_password) {
-                    await axios.post("http://localhost:8000/register", userdata).then((res) => {
+                    await axios.post("http://localhost:8000/auth/register", userdata).then((res) => {
                         if (res.data.message !== 'email already exists') {
                             alert("Registration Successful")
                             navigate('/signin')
