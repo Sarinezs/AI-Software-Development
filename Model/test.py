@@ -8,8 +8,10 @@ socket.bind("tcp://127.0.0.1:5555")  # เปิดเซิร์ฟเวอ�
 print("✅ ZeroMQ Server Started...")
 
 while True:
-    message = socket.recv_string()  # รับข้อความจาก MT5
-    print(f"📩 Message from MT5: {message.index}")
+    # message = socket.recv_string()  # รับข้อความจาก MT5
+    # print(f"📩 Message from MT5: {message.decode()}")
+    message = socket.recv()  # รับข้อมูลเป็นไบต์
+    print(f"Received: {message.decode()}")
     
-    response = "Received: " + message  # ส่งกลับ
-    socket.send_string(response)
+    # response = "Received: " + message  # ส่งกลับ
+    # socket.send_string(response)

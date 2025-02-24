@@ -49,7 +49,7 @@ exports.connect = async (req, res) => {
         } else {
             const newStatus = action === "connect" ? "connected" : "disconnected";
             const newBalance = action === "connect" ? balance : account[0].balance;
-            await conn.query("UPDATE mt5_account SET status =?, balance =? WHERE mt5_accountid = ?", [newStatus, newBalance, mt5id])
+            await conn.query("UPDATE mt5_account SET status =?, balance =? WHERE mt5_accountid = ? AND token = ?", [newStatus, newBalance, mt5id, token])
             console.log('status change to connect ')
         }
         res.json({
