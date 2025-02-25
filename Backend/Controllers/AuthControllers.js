@@ -110,6 +110,7 @@ exports.checkjwttoken = async (req, res) => {
             })
             return false
         }
+        console.log(user)
         res.status(200).json({
             message: 'token authentication success',
             user
@@ -122,3 +123,36 @@ exports.checkjwttoken = async (req, res) => {
         })
     }
 }
+
+exports.updateuser = async (req, res) => {
+    try {
+        const { user_id, username, email } = req.body
+        const userdata = {
+            username,
+            email,
+        }
+        const [result] = await conn.query('UPDATE user SET? WHERE user_id =?', [userdata, user_id])
+        const token = jwt.sign({
+            user_id,
+            username: userdata.username,
+            email,
+            role: 'user'
+        },
+            secret,
+            { expiresIn: "24h" })
+        console.log(user_id, result)
+        res.json({
+            message: 'update success',
+            result,
+            token
+        })
+    } catch (error) {
+        console.log('error', error)
+        res.json({
+            message: "update error",
+            error
+        })
+    }
+}
+
+exports.get

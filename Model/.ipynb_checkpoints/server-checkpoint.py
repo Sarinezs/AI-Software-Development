@@ -5,7 +5,7 @@ import pandas as pd
 import ta  # ใช้ pandas-ta
 
 # โหลดโมเดล AI
-best_model = PPO.load('./best_model.zip')
+best_model = PPO.load('./best_model/best_model.zip')
 
 def main():
     context = zmq.Context()

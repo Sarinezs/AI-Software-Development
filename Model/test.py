@@ -11,7 +11,7 @@ while True:
     # message = socket.recv_string()  # รับข้อความจาก MT5
     # print(f"📩 Message from MT5: {message.decode()}")
     message = socket.recv()  # รับข้อมูลเป็นไบต์
-    print(f"Received: {message.decode()}")
+    # print(f"Received: {message.decode()}")
     
     # response = "Received: " + message  # ส่งกลับ
-    # socket.send_string(response)
+    socket.send_string("1")

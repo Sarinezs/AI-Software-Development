@@ -1,7 +1,9 @@
-import React, {useEffect} from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import axios from 'axios'
 const Robot = () => {
+
+  const [userdata, setUserdata] = useState({});
 
   useEffect(() => {
     checktoken()
@@ -14,12 +16,12 @@ const Robot = () => {
       if (!token) {
         window.location.href = '/signin';
       }
-      await axios.post('http://localhost:8000/auth/checkjwttoken', {}, {
+      const response = await axios.post('http://localhost:8000/auth/checkjwttoken', {}, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
-
+      setUserdata(response.data.user || {});
     } catch (error) {
       // console.log(error.response)
       alert("Unauthorized! Please login again.");
@@ -30,7 +32,7 @@ const Robot = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar/>
       <h1>Robot Page</h1>
     </div>
   )

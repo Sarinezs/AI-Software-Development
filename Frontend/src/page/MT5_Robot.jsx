@@ -128,7 +128,8 @@ const MT5_Robot = () => {
             {/* <button onClick={() => { Setopenpopup(true) }}>add MT5 Account</button> */}
 
             <div>
-                <Button onClick={handleOpen}>Add MT5 Account</Button>
+                {/* <Button onClick={handleOpen}>Add MT5 Account</Button> */}
+                <Button variant="contained" style={{backgroundColor:"#fff", color:"#000"}} onClick={handleOpen}>Add MT5 Account</Button>
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -178,7 +179,7 @@ const MT5_Robot = () => {
                                                 {gentoken === null ? (
                                                     <div>
                                                         <br /><br />
-                                                        <button onClick={createtoken}>generate token</button>
+                                                        <Button variant="contained" onClick={createtoken}>generate token</Button>
                                                     </div>) :
                                                     <div>
                                                         <h3>Token</h3>
@@ -192,8 +193,8 @@ const MT5_Robot = () => {
                                                         />
                                                         <br /><br />
 
-                                                        <button onClick={copytext}>Copy text</button>
-                                                        <button onClick={handleSubmit}>create</button>
+                                                        <Button variant='contained' onClick={copytext}>Copy text</Button>
+                                                        <Button variant='contained' onClick={handleSubmit}>create</Button>
                                                     </div>}
                                             </div>
 
