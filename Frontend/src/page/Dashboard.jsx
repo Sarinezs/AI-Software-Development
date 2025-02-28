@@ -38,59 +38,73 @@ import axios from 'axios'
 
 const Dashboard = () => {
 	const columns = [
-		{ id: 'name', label: 'Name', minWidth: 100 },
-		{ id: 'code', label: 'ISO Code', minWidth: 100 },
+		{ id: 'mt5_accountid', label: 'mt5_accountid', minWidth: 100 },
+		{ id: 'name', label: 'name', minWidth: 100 },
+		{ id: 'token', label: 'token', minWidth: 100 },
+		{ id: 'model_id', label: 'model_id', minWidth: 100 },
+		{ id: 'status', label: 'status', minWidth: 100 },
 		{
-			id: 'population',
-			label: 'Population',
-			minWidth: 100,
-			// align: 'right',
-			format: (value) => value.toLocaleString('en-US'),
-		},
-		{
-			id: 'size',
-			label: 'Size\u00a0(km\u00b2)',
-			minWidth: 100,
-			// align: 'right',
-			format: (value) => value.toLocaleString('en-US'),
-		},
-		{
-			id: 'density',
-			label: 'Density',
+			id: 'balance',
+			label: 'balance',
 			minWidth: 100,
 			// align: 'right',
 			format: (value) => value.toFixed(2),
 		},
-		{
-			id: 'density',
-			label: 'Density',
-			minWidth: 100,
-			// align: 'right',
-			format: (value) => value.toFixed(2),
-		},
+		{ id: 'actions', label: 'actions', minWidth: 100 },
+
 	];
 
-	function createData(name, code, population, size) {
-		const density = population / size;
-		return { name, code, population, size, density };
+	function createData(mt5_accountid, name, token, model_id, status, balance) {
+		return { mt5_accountid, name, token, model_id, status, balance };
 	}
 
-	const rows = [
-		createData('India', 'IN', 1324171354, 3287263),
-		createData('China', 'CN', 1403500365, 9596961),
-		createData('Italy', 'IT', 60483973, 301340),
-		createData('United States', 'US', 327167434, 9833520),
-		createData('Canada', 'CA', 37602103, 9984670),
-		createData('Australia', 'AU', 25475400, 7692024),
-		createData('Germany', 'DE', 83019200, 357578),
-		createData('Ireland', 'IE', 4857000, 70273),
-		createData('Mexico', 'MX', 126577691, 1972550),
-		createData('Japan', 'JP', 126317000, 377973),
-		createData('France', 'FR', 67022000, 640679),
-		createData('Russia', 'RU', 146793744, 17098246),
-		createData('Nigeria', 'NG', 200962417, 923768),
-		createData('Brazil', 'BR', 210147125, 8515767),
-	];
+	const [rows, setRows] = useState([]);
+
+	const getmt5account = async (req, res) => {
+		try {
+			const token = localStorage.getItem('token');
+			const response = await axios.get('http://localhost:8000/MT5/getaccount', {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			});
+
+			// ✅ แปลงข้อมูล API เป็น rows
+			const accountData = response.data.results.map(acc => {
+				let balance = acc.balance !== 0 ? acc.balance : 0; // ถ้า balance เป็น null ให้ใช้ 0
+				let model_id = acc.model_id === null ? 'No model' : 'model'; // แปลง status เป็นภาษาไทย
+
+				return createData(acc.mt5_accountid, acc.name, acc.token, model_id, acc.status, balance);
+			});
+
+			setRows(accountData);
+			// console.log(rows.length);
+
+		} catch (error) {
+			console.log("Error fetching MT5 accounts:", error);
+		}
+	}
+
+	const handleDelete = (mt5accountid) => {
+		console.log(mt5accountid);
+	};
+
+	// const rows = [
+	// 	createData('India', 'IN', 1324171354, 3287263),
+	// 	createData('China', 'CN', 1403500365, 9596961),
+	// 	createData('Italy', 'IT', 60483973, 301340),
+	// 	createData('United States', 'US', 327167434, 9833520),
+	// 	createData('Canada', 'CA', 37602103, 9984670),
+	// 	createData('Australia', 'AU', 25475400, 7692024),
+	// 	createData('Germany', 'DE', 83019200, 357578),
+	// 	createData('Ireland', 'IE', 4857000, 70273),
+	// 	createData('Mexico', 'MX', 126577691, 1972550),
+	// 	createData('Japan', 'JP', 126317000, 377973),
+	// 	createData('France', 'FR', 67022000, 640679),
+	// 	createData('Russia', 'RU', 146793744, 17098246),
+	// 	createData('Nigeria', 'NG', 200962417, 923768),
+	// 	createData('Brazil', 'BR', 210147125, 8515767),
+	// ];
 
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -108,6 +122,7 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		checktoken()
+		getmt5account()
 	}, [])
 
 	const checktoken = async () => {
@@ -191,6 +206,7 @@ const Dashboard = () => {
 				}
 			})
 			handleClosePopup()
+			getmt5account()
 			console.log("create mt5 success", gentoken)
 		} catch (error) {
 			console.log("create mt5 error")
@@ -290,67 +306,66 @@ const Dashboard = () => {
 					</div>
 					{/* // ตาราง mt5 account */}
 					<div className='mt5-table'>
-						<h3>MT5 Account</h3>
-						<Paper sx={{ width: '100%', overflow: 'hidden', marginTop: "10px"}}>
-							<TableContainer sx={{ maxHeight: 634 }}>
+						<h1>MT5 Account</h1>
+						<Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10px" }}>
+							<TableContainer sx={{ maxHeight: 634, height: 634 }}>
 								<Table stickyHeader aria-label="sticky table">
 									<TableHead>
 										<TableRow>
 											{columns.map((column) => (
-												<TableCell
-													key={column.id}
-													align={column.align}
-													style={{ minWidth: column.minWidth }}
-												>
+												<TableCell key={column.id} style={{ minWidth: column.minWidth }}>
 													{column.label}
 												</TableCell>
 											))}
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{rows
-											// .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-											.map((row) => {
-												return (
-													<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-														{columns.map((column) => {
-															const value = row[column.id];
-															return (
-																<TableCell key={column.id} align={column.align}>
-																	{column.format && typeof value === 'number'
-																		? column.format(value)
-																		: value}
-																</TableCell>
-															);
-														})}
-													</TableRow>
-												);
-											})}
+										{rows.map((row) => (
+											<TableRow hover key={row.mt5accountid}>
+												{columns.map((column) => {
+													const value = row[column.id];
+
+													// ✅ เพิ่มปุ่มลบในคอลัมน์ Actions
+													return (
+														<TableCell key={column.id}>
+															{column.id === "actions" ? (
+																<Button
+																	variant="contained"
+																	color="error"
+																	onClick={() => handleDelete(row.mt5_accountid)}
+																>
+																	Delete
+																</Button>
+															) : column.format && typeof value === "number" ? (
+																column.format(value)
+															) : (
+																value
+															)}
+														</TableCell>
+													);
+												})}
+											</TableRow>
+										))}
 									</TableBody>
 								</Table>
 							</TableContainer>
-							{/* <TablePagination
-							rowsPerPageOptions={[10, 25, 100]}
-							component="div"
-							count={rows.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
-							onPageChange={handleChangePage}
-							onRowsPerPageChange={handleChangeRowsPerPage}
-						/> */}
 						</Paper>
 					</div>
 
 				</div>
 				<div className='item2'>
 					<Gauge
-						value={1}
+						value={rows.length}
+						valueMax={10}
 						startAngle={0}
 						endAngle={360}
 						innerRadius="80%"
 						outerRadius="100%"
-						width={100}
-						height={100}
+						width={250}
+						height={250}
+						text={
+							({ value, }) => `Number of asset : ${value}`
+						}
 					/>
 				</div>
 			</div>

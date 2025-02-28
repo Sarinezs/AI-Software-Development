@@ -61,3 +61,26 @@ exports.connect = async (req, res) => {
         }).status(400)
     }
 }
+
+exports.getaccount = async (req, res) => {
+    try {
+        const authheader = req.headers['authorization']
+        let authtoken = ''
+        if (authheader) {
+            authtoken = authheader.split(' ')[1]
+        }
+        const userID = jwt.verify(authtoken, secret).user_id
+
+        const [results] = await conn.query('SELECT * FROM mt5_account WHERE user_id =? ', [userID])
+
+        // console.log(user)
+        res.json({
+            results
+        })
+    } catch (error) {
+        res.status(403).json({
+            message: 'getaccount fail',
+            error
+        })
+    }
+}

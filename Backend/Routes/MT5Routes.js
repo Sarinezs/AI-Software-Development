@@ -7,5 +7,6 @@ const CreateMt5 = require('../Controllers/MT5Controllers')
 
 router.post("/create", CreateMt5.createmt5)
 router.post("/connect", CreateMt5.connect)
+router.get("/getaccount", CreateMt5.getaccount)
 
 module.exports = router;

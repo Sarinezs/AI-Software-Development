@@ -5,7 +5,7 @@ import pandas as pd
 import ta  # ใช้ pandas-ta
 
 # โหลดโมเดล AI
-best_model = PPO.load('./best_model.zip')
+best_model = PPO.load('./best_model1/best_model.zip')
 
 def main():
     context = zmq.Context()
@@ -22,7 +22,7 @@ def main():
             # รองรับ JSON Array
             data_list = json.loads(message_str)
 
-            # แปลงข้อมูลเข้า DataFrame ชั่วคราว (Temporary DataFrame)
+            # แปลงข้อมูลเข้า DataFrame
             df = pd.DataFrame(data_list)
 
             # แปลงคอลัมน์ Time เป็น datetime
@@ -38,8 +38,15 @@ def main():
             # แทนค่า NaN ด้วย 0
             df.fillna(0, inplace=True)
 
-            # ใช้ข้อมูลล่าสุด 24 แท่งเท่านั้น
-            df_latest = df.tail(24)
+            # ✅ จำกัดข้อมูลให้เหลือ 12 แท่ง
+            df_latest = df.tail(12)
+
+            # ✅ เลือกเฉพาะ Features ที่โมเดลต้องการ
+            features = ['Open','High','Low','Close','Volume','Spread','SMA','RSI','OBV']
+            df_latest = df_latest[features]
+
+            # ✅ แปลงเป็น Array 3D ตามที่โมเดลต้องการ
+            df_latest = df_latest.values.reshape(12, len(features))
 
             # ทำ Prediction
             prediction, _ = best_model.predict(df_latest)
@@ -54,8 +61,10 @@ def main():
             print(f"Unexpected error: {e}")
             prediction = "Error"
 
+
         # ตอบกลับไปยัง MT5
         socket.send_string(str(prediction))
+        print("signal send: ", str(prediction))
 
         # ✅ ไม่ต้องเก็บข้อมูลไว้ใน DataFrame หลัก → ลบข้อมูลอัตโนมัติหลังพยากรณ์เสร็จ
 
