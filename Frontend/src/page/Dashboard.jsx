@@ -10,6 +10,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -41,7 +42,7 @@ const Dashboard = () => {
 		{ id: 'mt5_accountid', label: 'mt5_accountid', minWidth: 100 },
 		{ id: 'name', label: 'name', minWidth: 100 },
 		{ id: 'token', label: 'token', minWidth: 100 },
-		{ id: 'model_id', label: 'model_id', minWidth: 100 },
+		{ id: 'symbol', label: 'symbol', minWidth: 100 },
 		{ id: 'status', label: 'status', minWidth: 100 },
 		{
 			id: 'balance',
@@ -54,11 +55,23 @@ const Dashboard = () => {
 
 	];
 
-	function createData(mt5_accountid, name, token, model_id, status, balance) {
-		return { mt5_accountid, name, token, model_id, status, balance };
+	function createData(mt5_accountid, name, token, symbol, status, balance) {
+		return { mt5_accountid, name, token, symbol, status, balance };
 	}
 
 	const [rows, setRows] = useState([]);
+
+	const fetchModelName = async (modelId) => {
+		if (!modelId) return 'No model'; // ถ้า model_id เป็น null หรือ undefined
+		try {
+			const response = await axios.get(`http://localhost:8000/model/getModelname/${modelId}`);
+			// console.log(response.data.result)
+			return response.data.result || 'no model'; // ถ้าไม่มีข้อมูลให้ใช้ "Unknown model"
+		} catch (error) {
+			console.error("Error fetching model name:", error);
+			return 'no model';
+		}
+	};
 
 	const getmt5account = async (req, res) => {
 		try {
@@ -70,12 +83,14 @@ const Dashboard = () => {
 			});
 
 			// ✅ แปลงข้อมูล API เป็น rows
-			const accountData = response.data.results.map(acc => {
-				let balance = acc.balance !== 0 ? acc.balance : 0; // ถ้า balance เป็น null ให้ใช้ 0
-				let model_id = acc.model_id === null ? 'No model' : 'model'; // แปลง status เป็นภาษาไทย
+			const accountData = await Promise.all(
+				response.data.results.map(async (acc) => {
+					let balance = acc.balance !== 0 ? acc.balance : 0;
+					let modelName = await fetchModelName(acc.model_id); // Query หา model_name
 
-				return createData(acc.mt5_accountid, acc.name, acc.token, model_id, acc.status, balance);
-			});
+					return createData(acc.mt5_accountid, acc.name, acc.token, modelName, acc.status, balance);
+				})
+			);
 
 			setRows(accountData);
 			// console.log(rows.length);
@@ -85,38 +100,8 @@ const Dashboard = () => {
 		}
 	}
 
-	const handleDelete = (mt5accountid) => {
-		console.log(mt5accountid);
-	};
 
-	// const rows = [
-	// 	createData('India', 'IN', 1324171354, 3287263),
-	// 	createData('China', 'CN', 1403500365, 9596961),
-	// 	createData('Italy', 'IT', 60483973, 301340),
-	// 	createData('United States', 'US', 327167434, 9833520),
-	// 	createData('Canada', 'CA', 37602103, 9984670),
-	// 	createData('Australia', 'AU', 25475400, 7692024),
-	// 	createData('Germany', 'DE', 83019200, 357578),
-	// 	createData('Ireland', 'IE', 4857000, 70273),
-	// 	createData('Mexico', 'MX', 126577691, 1972550),
-	// 	createData('Japan', 'JP', 126317000, 377973),
-	// 	createData('France', 'FR', 67022000, 640679),
-	// 	createData('Russia', 'RU', 146793744, 17098246),
-	// 	createData('Nigeria', 'NG', 200962417, 923768),
-	// 	createData('Brazil', 'BR', 210147125, 8515767),
-	// ];
 
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-	// const handleChangePage = (event, newPage) => {
-	// 	setPage(newPage);
-	// };
-
-	// const handleChangeRowsPerPage = (event) => {
-	// 	setRowsPerPage(+event.target.value);
-	// 	setPage(0);
-	// };
 
 	const [userdata, setUserdata] = useState({});
 
@@ -182,7 +167,7 @@ const Dashboard = () => {
 	}
 
 	const handleChange = (e) => {
-		console.log(e.target.name, e.target.value)
+		// console.log(e.target.name, e.target.value)
 		setForm({
 			...form,
 			[e.target.name]: e.target.value
@@ -207,15 +192,56 @@ const Dashboard = () => {
 			})
 			handleClosePopup()
 			getmt5account()
-			console.log("create mt5 success", gentoken)
+			// console.log("create mt5 success", gentoken)
 		} catch (error) {
 			console.log("create mt5 error")
 		}
 	}
 
+	const handleDelete = async (mt5_accountid, mt5token) => {
+		try {
+			const token = localStorage.getItem('token');
+			const accountdata = {
+				mt5id: mt5_accountid,
+				token: mt5token,
+			}
+			const response = await axios.delete('http://localhost:8000/MT5/deleteaccount', {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				},
+				data: accountdata
+			});
+			getmt5account()
+
+		} catch (error) {
+			console.log("delete MT5 accounts:", error);
+		}
+	};
+
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
+
+	// model ยืนยันการลบ
+	const [modalopen, setmodalOpen] = useState(false);
+	const [selectedAccount, setSelectedAccount] = useState(null);
+
+	const handleOpenModal = (accountId, token) => {
+		setSelectedAccount({ accountId, token });
+		setmodalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setmodalOpen(false);
+		setSelectedAccount(null);
+	};
+
+	const confirmDelete = () => {
+		if (selectedAccount) {
+			handleDelete(selectedAccount.accountId, selectedAccount.token);
+		}
+		handleCloseModal();
+	};
 
 	return (
 
@@ -283,7 +309,7 @@ const Dashboard = () => {
 																{/* <input type="text" value={gentoken} className="token" name='token' id='apitoken' disabled /> */}
 																<TextField
 																	disabled
-																	id="standard-disabled"
+																	id="apitoken"
 																	defaultValue={gentoken}
 																	style={{ width: '350px' }}
 																/>
@@ -308,7 +334,7 @@ const Dashboard = () => {
 					<div className='mt5-table'>
 						<h1>MT5 Account</h1>
 						<Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10px" }}>
-							<TableContainer sx={{ maxHeight: 634, height: 634 }}>
+							<TableContainer sx={{ maxHeight: 634, minheight: 300 }}>
 								<Table stickyHeader aria-label="sticky table">
 									<TableHead>
 										<TableRow>
@@ -332,7 +358,7 @@ const Dashboard = () => {
 																<Button
 																	variant="contained"
 																	color="error"
-																	onClick={() => handleDelete(row.mt5_accountid)}
+																	onClick={() => handleOpenModal(row.mt5_accountid, row.token)}
 																>
 																	Delete
 																</Button>
@@ -341,12 +367,31 @@ const Dashboard = () => {
 															) : (
 																value
 															)}
+
 														</TableCell>
 													);
 												})}
 											</TableRow>
 										))}
+										<Dialog open={modalopen} onClose={handleCloseModal}>
+											<DialogTitle>ยืนยันการลบ</DialogTitle>
+											<DialogContent>
+												<DialogContentText>
+													คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้? <br />
+													<strong>mt5 Account ID:</strong> {selectedAccount?.accountId}
+												</DialogContentText>
+											</DialogContent>
+											<DialogActions>
+												<Button onClick={handleCloseModal} color="primary">
+													ยกเลิก
+												</Button>
+												<Button onClick={confirmDelete} color="error" autoFocus>
+													ยืนยันลบ
+												</Button>
+											</DialogActions>
+										</Dialog>
 									</TableBody>
+
 								</Table>
 							</TableContainer>
 						</Paper>

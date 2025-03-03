@@ -26,7 +26,7 @@ const Navbar = ({ username }) => {
                 <ul>
                     <Link to="/Dashboard">Dashboard</Link>
                     <Link to="/Robot">Robots</Link>
-                    <Link to="/MT5_Robot">MT5 Robots</Link>
+                    {/* <Link to="/MT5_Robot">MT5 Robots</Link> */}
                     <Link>Commission</Link>
                 </ul>
             </div>

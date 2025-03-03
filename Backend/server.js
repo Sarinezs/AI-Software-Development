@@ -15,6 +15,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const UserRoutes = require('./Routes/UserRoutes')
 const AuthRoutes = require('./Routes/AuthRoutes')
 const MT5Routes = require('./Routes/MT5Routes')
+const ConnectModel = require('./Routes/ConnectModel')
+
 const conn = require('./DB')
 
 const app = express()
@@ -82,6 +84,7 @@ const secret = 'mysecret'
 app.use('/user', UserRoutes)
 app.use('/auth', AuthRoutes)
 app.use('/MT5', MT5Routes)
+app.use('/model', ConnectModel)
 
 
 // app.post('/register', async (req, res) => {
@@ -228,7 +231,7 @@ app.get("/api/get-selected-model", async (req, res) => {
 
 app.post('/api/get-history', async (req, res) => {
     try {
-        // console.log(req.body)
+        console.log(req.body)
         res.json(req.body)
     } catch (error) {
         console.log("get-history error", error)

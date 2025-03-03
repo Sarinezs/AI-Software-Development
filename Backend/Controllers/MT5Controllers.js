@@ -33,7 +33,7 @@ exports.createmt5 = async (req, res) => {
 exports.connect = async (req, res) => {
     try {
         const { token, mt5id, action, balance } = req.body
-        console.log(token, mt5id, action, balance)
+        // console.log(token, mt5id, action, balance)
 
         if (!token) {
             return res.json({
@@ -80,6 +80,57 @@ exports.getaccount = async (req, res) => {
     } catch (error) {
         res.status(403).json({
             message: 'getaccount fail',
+            error
+        })
+    }
+}
+
+exports.deletemt5 = async (req, res) => {
+    try {
+        const { mt5id, token } = req.body
+        const authheader = req.headers['authorization']
+        let authtoken = ''
+        if (authheader) {
+            authtoken = authheader.split(' ')[1]
+        }
+        const user = jwt.verify(authtoken, secret)
+        if (!user) {
+            res.status(403).json({
+                message: 'token authentication fail',
+            })
+            return
+        }
+
+        const [results] = await conn.query('DELETE FROM mt5_account WHERE mt5_accountid = ? AND token = ?', [mt5id, token])
+        res.json({
+            message: 'delete account success',
+            results
+        })
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'delete account fail',
+            error
+        })
+    }
+}
+
+exports.getnullmodelmt5 = async (req, res) => {
+    try {
+        const authheader = req.headers['authorization']
+        let authtoken = ''
+        if (authheader) {
+            authtoken = authheader.split(' ')[1]
+        }
+        const user = jwt.verify(authtoken, secret)
+
+        const [results] = await conn.query('SELECT * FROM mt5_account WHERE user_id =? AND model_id IS NULL', [user.user_id])
+        res.json({
+            results,
+        })
+    } catch (error) {
+        res.json({
+            message: 'get null model mt5 fail',
             error
         })
     }
