@@ -16,6 +16,8 @@ const UserRoutes = require('./Routes/UserRoutes')
 const AuthRoutes = require('./Routes/AuthRoutes')
 const MT5Routes = require('./Routes/MT5Routes')
 const ConnectModel = require('./Routes/ConnectModel')
+const GetHist = require('./Routes/GetHistoryRoutes')
+const CreateBill = require('./Routes/BillRoutes')
 
 const conn = require('./DB')
 
@@ -85,6 +87,8 @@ app.use('/user', UserRoutes)
 app.use('/auth', AuthRoutes)
 app.use('/MT5', MT5Routes)
 app.use('/model', ConnectModel)
+app.use('/get-history', GetHist)
+app.use('/createbill', CreateBill)
 
 
 // app.post('/register', async (req, res) => {
@@ -213,14 +217,11 @@ app.get("/api/get-selected-model", async (req, res) => {
     try {
         const { mt5_id, api_token } = req.query; // ดึงค่าจาก Query Parameters
 
-        console.log("🔹 Received Request:", { mt5_id, api_token })
+        // console.log("🔹 Received Request:", { mt5_id, api_token })
 
         // ✅ ส่งข้อมูล Model กลับให้ MQL5
         const selectedModel = {
-            success: true,
-            message: "Model data retrieved successfully",
-            mt5_id: mt5_id,
-            selected_model: "AI-Trading-Model-01"
+            model_name: "EURUSD"
         };
 
         res.status(200).json(selectedModel);
@@ -229,14 +230,31 @@ app.get("/api/get-selected-model", async (req, res) => {
     }
 });
 
-app.post('/api/get-history', async (req, res) => {
-    try {
-        console.log(req.body)
-        res.json(req.body)
-    } catch (error) {
-        console.log("get-history error", error)
-    }
-})
+// app.post('/api/get-history', async (req, res) => {
+//     try {
+//         const { deals } = req.body;
+
+//         deals.forEach(deal => {
+//             // แปลง Unix Timestamp เป็นวันที่และเวลาใน GMT+7
+//             const date = new Date(deal.time * 1000); // คูณ 1000 เพราะ JS ใช้ milliseconds
+//             const options = { timeZone: 'Asia/Bangkok', hour12: false };
+
+//             // ใช้ Intl.DateTimeFormat เพื่อแสดงผลใน GMT+7
+//             const formattedDate = new Intl.DateTimeFormat('en-GB', {
+//                 year: 'numeric', month: '2-digit', day: '2-digit',
+//                 hour: '2-digit', minute: '2-digit', second: '2-digit',
+//                 timeZone: 'Asia/Bangkok'
+//             }).format(date);
+
+//             console.log(`${deal.dealTicket} GMT+7: ${formattedDate}`);
+//         });
+
+//         res.json(req.body);
+//     } catch (error) {
+//         console.log("get-history error", error);
+//     }
+// });
+
 
 // ระบบจ่ายเงิน
 app.post('/api/checkout', async (req, res) => {
