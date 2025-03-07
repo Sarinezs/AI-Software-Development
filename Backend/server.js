@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 
 require('dotenv').config();
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 
 
 const UserRoutes = require('./Routes/UserRoutes')
@@ -18,11 +18,13 @@ const MT5Routes = require('./Routes/MT5Routes')
 const ConnectModel = require('./Routes/ConnectModel')
 const GetHist = require('./Routes/GetHistoryRoutes')
 const CreateBill = require('./Routes/BillRoutes')
+const Payment = require('./Routes/PaymentRoutes')
 
 const conn = require('./DB')
 
 const app = express()
-app.use(express.json())
+// app.use(express.json())
+
 app.use(cors(
     {
         credentials: true,
@@ -39,6 +41,9 @@ app.use(session({
 
 const port = 8000
 const secret = 'mysecret'
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const endpointSecret = 'whsec_cc88b8668d31645b3abc9fc30b05b88c880b9566e5ba51d3ea4652bf1e2590a0';
 
 // let conn = null
 // var text = ''
@@ -83,12 +88,13 @@ const secret = 'mysecret'
 //     }
 // })
 
-app.use('/user', UserRoutes)
-app.use('/auth', AuthRoutes)
-app.use('/MT5', MT5Routes)
-app.use('/model', ConnectModel)
-app.use('/get-history', GetHist)
-app.use('/createbill', CreateBill)
+app.use('/user', express.json(), UserRoutes)
+app.use('/auth', express.json(), AuthRoutes)
+app.use('/MT5', express.json(), MT5Routes)
+app.use('/model', express.json(), ConnectModel)
+app.use('/get-history', express.json(), GetHist)
+app.use('/createbill', express.json(), CreateBill)
+app.use('/payment', express.json(), Payment)
 
 
 // app.post('/register', async (req, res) => {
@@ -258,7 +264,7 @@ app.get("/api/get-selected-model", async (req, res) => {
 
 // ระบบจ่ายเงิน
 app.post('/api/checkout', async (req, res) => {
-    const { user, product } = req.body
+    const { bill } = req.body
     try {
         const orderId = uuidv4();
         const session = await stripe.checkout.sessions.create({
@@ -268,11 +274,11 @@ app.post('/api/checkout', async (req, res) => {
                     price_data: {
                         currency: "thb",
                         product_data: {
-                            name: product.name,
+                            name: "Robot trade's services fee",
                         },
-                        unit_amount: product.price * 100,
+                        unit_amount: bill.amount * 100,
                     },
-                    quantity: product.quantity,
+                    quantity: 1,
                 },
             ],
             mode: "payment",
@@ -286,6 +292,48 @@ app.post('/api/checkout', async (req, res) => {
         console.log("error")
     }
 })
+
+app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+    const sig = req.headers["stripe-signature"];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const paymentSuccessData = event.data.object;
+            console.log("data-------", paymentSuccessData)
+            const sessionId = paymentSuccessData.id;
+
+            const data = {
+                status: paymentSuccessData.status,
+            };
+
+            // const result = await conn.query("UPDATE orders SET ? WHERE session_id = ?", [
+            //     data,
+            //     sessionId,
+            // ]);
+
+            // console.log("=== update result", result);
+            // console.log("=== update result test");
+
+            // event.data.object.id = session.id
+            // event.data.object.customer_details คือข้อมูลลูกค้า
+            break;
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.send();
+});
 app.listen(port, async () => {
     // await connectMySQL()
     // console.log(conn)

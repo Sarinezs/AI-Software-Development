@@ -110,7 +110,7 @@ exports.checkjwttoken = async (req, res) => {
             })
             return false
         }
-        console.log(user)
+        // console.log(user)
         res.status(200).json({
             message: 'token authentication success',
             user
@@ -154,5 +154,3 @@ exports.updateuser = async (req, res) => {
         })
     }
 }
-
-exports.get
