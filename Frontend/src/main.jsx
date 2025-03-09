@@ -10,6 +10,9 @@ import Robot from './page/Robot.jsx'
 import MT5_Robot from './page/MT5_Robot.jsx'
 import Admin from './page/Admin.jsx'
 import UserPage from './page/UserPage.jsx'
+import Commission from './page/Commission.jsx'
+import Paymentsuccess from './page/Paymentsuccess.jsx'
+import Paymentfailed from './page/Paymentfailed.jsx'
 
 const router = createBrowserRouter([
   {
@@ -39,6 +42,18 @@ const router = createBrowserRouter([
   {
     path: '/User',
     element: <UserPage />
+  },
+  {
+    path: '/Commission',
+    element: <Commission />
+  },
+  {
+    path: '/Paymentsuccess',
+    element: <Paymentsuccess />
+  },
+  {
+    path: '/Paymentfailed',
+    element: <Paymentfailed />
   },
 ])
 

@@ -57,7 +57,7 @@ exports.create_bill = async (req, res) => {
 
             if (totalProfit > 0) {
                 const service_fee = totalProfit * 0.01
-
+                console.log("create bill")
                 const [result] = conn.query("INSERT INTO Bill set ?", {
                     user_id: account[0].user_id,
                     mt5_accountid: account[0].mt5_accountid,
@@ -69,6 +69,7 @@ exports.create_bill = async (req, res) => {
             }
             else if (totalProfit < 0) {
                 const service_fee = 0
+                console.log("create bill")
                 const [result] = conn.query("INSERT INTO Bill set ?", {
                     user_id: account[0].user_id,
                     mt5_accountid: account[0].mt5_accountid,
@@ -85,6 +86,28 @@ exports.create_bill = async (req, res) => {
     } catch (error) {
         res.json({
             message: "Error creating bill",
+            error
+        })
+    }
+}
+
+exports.get_bills = async (req, res) => {
+    try {
+        const authheader = req.headers['authorization']
+        let authtoken = ''
+        if (authheader) {
+            authtoken = authheader.split(' ')[1]
+        }
+        const user = jwt.verify(authtoken, secret)
+        // console.log(user)
+        const [results] = await conn.query('SELECT * FROM Bill WHERE user_id =? AND status = ?', [user.user_id, 'unpaid'])
+
+        res.json({
+            bills: results
+        }).status(200)
+    } catch (error) {
+        res.json({
+            message: "Error getting bills",
             error
         })
     }

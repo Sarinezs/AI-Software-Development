@@ -28,7 +28,7 @@ const Robot = () => {
 					'Authorization': `Bearer ${token}`
 				}
 			})
-			setUserdata(response.data.user || {});
+			// setUserdata(response.data.user || {});
 		} catch (error) {
 			// console.log(error.response)
 			alert("Unauthorized! Please login again.");
@@ -84,24 +84,40 @@ const Robot = () => {
 
 
 	const handleChange = (id, event) => {
+		console.log(id, event.target.value);
 		setSelectedValues(prev => ({
 			...prev,
-			"token": event.target.value,
-			"model_id": 1
+			[id]: event.target.value,
 		}));
 	};
-
-
 
 	return (
 		<div>
 			<Navbar />
-			<div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+			<div style={{ display: "flex", flexWrap: "wrap", gap: "20px", margin: "5% 0 0 8%"}}>
 				<div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px" }}>
-					<h1>EURUSD</h1>
+					<h1>Select Model</h1>
+					<br />
 					<Box sx={{ maxWidth: 120 }}>
 						<FormControl fullWidth>
-							<InputLabel>เลือกค่า</InputLabel>
+							<InputLabel>Symbol</InputLabel>
+							<Select
+								label="เลือกค่า"
+								defaultValue={"qqq"}
+								onChange={(event) => handleChange("model_id", event)}
+							>
+								{model_name.map((option) => ( // ✅ วนลูปสร้าง MenuItem
+									<MenuItem value={option.model_id}>
+										{option.model_name}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
+					<br />
+					<Box sx={{ maxWidth: 120 }}>
+						<FormControl fullWidth>
+							<InputLabel>Account</InputLabel>
 							<Select
 								label="เลือกค่า"
 								defaultValue={"qqq"}
@@ -118,7 +134,7 @@ const Robot = () => {
 				</div>
 
 			</div>
-			<button onClick={connectmodel}>connect</button>
+			<button style={{margin: "1% 0 0 8%"}} onClick={connectmodel}>connect</button>
 		</div>
 	)
 }

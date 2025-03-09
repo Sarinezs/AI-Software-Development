@@ -5,6 +5,7 @@ const secret = 'mysecret'
 exports.get_history = async (req, res) => {
     try {
         const { token, deals } = req.body;
+        console.log(deals)
 
         deals.forEach(deal => {
             // แปลง Unix Timestamp เป็น milliseconds
@@ -39,10 +40,7 @@ exports.get_history = async (req, res) => {
         const responseData = await createBillResponse.json();
         // console.log("📩 Response from server:", responseData);
 
-        res.json({
-            message: "Get history success",
-            data: responseData
-        });
+        res.json();
     } catch (error) {
         console.log("get-history error", error);
     }

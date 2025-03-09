@@ -122,7 +122,7 @@ const Dashboard = () => {
 					'Authorization': `Bearer ${token}`
 				}
 			})
-			setUserdata(response.data.user || {});
+			// setUserdata(response.data.user || {});
 
 		} catch (error) {
 			console.log(error)

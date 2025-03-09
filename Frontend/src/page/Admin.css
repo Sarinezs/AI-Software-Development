@@ -1,0 +1,13 @@
+.admin-grid {
+    display: grid;
+    /* grid-template-columns: 16% 70%; */
+    /* background-color: aqua; */
+}
+
+.admin-sidebar {
+    position: relative;
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    border: 1px solid black;
+}

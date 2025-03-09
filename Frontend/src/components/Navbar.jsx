@@ -17,7 +17,9 @@ const Navbar = ({ username }) => {
     };
 
     return (
+
         <div className='navbar'>
+
             <div className='nav-logo'>
                 <img src="/Logo.png" alt="TradeX Logo" />
                 <h2>TradeX</h2>
@@ -27,7 +29,7 @@ const Navbar = ({ username }) => {
                     <Link to="/Dashboard">Dashboard</Link>
                     <Link to="/Robot">Robots</Link>
                     {/* <Link to="/MT5_Robot">MT5 Robots</Link> */}
-                    <Link>Commission</Link>
+                    <Link to="/Commission">Commission</Link>
                 </ul>
             </div>
             <div className='nav-user'>
@@ -43,6 +45,9 @@ const Navbar = ({ username }) => {
                 )}
             </div>
         </div>
+
+
+
     );
 };
 

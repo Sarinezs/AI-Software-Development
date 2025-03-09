@@ -285,7 +285,8 @@ app.post('/api/checkout', async (req, res) => {
             success_url: `http://localhost:5173/Dashboard`,
             cancel_url: `http://localhost:8888/cancel.html?id=${orderId}`,
         });
-
+// cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
+// cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
         console.log(session)
         res.json(req.body)
     } catch (error) {
@@ -309,20 +310,18 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
     switch (event.type) {
         case 'checkout.session.completed':
             const paymentSuccessData = event.data.object;
-            console.log("data-------", paymentSuccessData)
-            const sessionId = paymentSuccessData.id;
+            const session_id = paymentSuccessData.id;
 
             const data = {
                 status: paymentSuccessData.status,
             };
 
-            // const result = await conn.query("UPDATE orders SET ? WHERE session_id = ?", [
-            //     data,
-            //     sessionId,
-            // ]);
+            const [result] = await conn.query("UPDATE Bill SET ? WHERE session_id = ?", [
+                data,
+                session_id,
+            ]);
 
             // console.log("=== update result", result);
-            // console.log("=== update result test");
 
             // event.data.object.id = session.id
             // event.data.object.customer_details คือข้อมูลลูกค้า
