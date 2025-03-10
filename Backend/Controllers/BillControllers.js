@@ -33,7 +33,8 @@ exports.create_bill = async (req, res) => {
         // console.log("⏳ Oldest Time:", formatDate(minTime));
         // console.log("⏰ Newest Time:", formatDate(maxTime));
 
-        // const totalProfit = deals.reduce((sum, deal) => sum + deal.profit, 0)
+        const totalProfit = deals.reduce((sum, deal) => sum + deal.profit, 0)
+        console.log("Total Profit:", totalProfit)
 
         const start_date = formatDate(minTime);
         const end_date = formatDate(maxTime);
@@ -53,7 +54,7 @@ exports.create_bill = async (req, res) => {
         }
         else {
             console.log("No Bill found in range ", start_date, " - ", end_date);
-            const totalProfit = 10000
+            // const totalProfit = 10000
 
             if (totalProfit > 0) {
                 const service_fee = totalProfit * 0.01
