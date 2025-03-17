@@ -33,7 +33,7 @@ exports.getmodelnamebyid = async (req, res) => {
     try {
         const { model_id } = req.params
         const [result] = await conn.query('SELECT model_name FROM model WHERE model_id =?', [model_id])
-        res.json({
+        res.status(200).json({
             message: "Get model name",
             result: result[0].model_name
         })

@@ -18,11 +18,19 @@ exports.getUser = async (req, res) => {
             users: results
         })
     } catch (error) {
-        // console.log('error', error)
-        res.status(403).json({
-            message: 'getUser authentication fail',
-            error
-        })
+        console.log('error', error)
+        if (error.name === 'JsonWebTokenError') {
+            res.status(403).json({
+                message: 'Token is not valid',
+                error
+            })
+        }
+        else {
+            res.status(500).json({
+                message: 'server error',
+                error
+            })
+        }
     }
 }
 
@@ -34,7 +42,7 @@ exports.getLoggedInUser = async (req, res) => {
             authtoken = authheader.split(' ')[1]
         }
         const user = jwt.verify(authtoken, secret)
-        console.log(user)
+        // console.log(user)
         res.json({
             user
         })

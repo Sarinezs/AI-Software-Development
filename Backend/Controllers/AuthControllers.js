@@ -9,7 +9,7 @@ exports.register = async (req, res) => {
     try {
         const { username, email, password, confirm_password } = req.body
         if (password !== confirm_password) {
-            res.json({
+            res.status(400).json({
                 message: "password not match"
             })
             return false;
@@ -23,7 +23,7 @@ exports.register = async (req, res) => {
         }
         const [ismember] = await conn.query('SELECT * FROM user WHERE email = ?', email)
         if (ismember.length !== 0) {
-            res.json({
+            res.status(400).json({
                 message: "email already exists"
             })
             return false;
@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
         const match = await bcrypt.compare(password, userdata.password)
         if (!match) { // รหัสตรงกันไหม
             res.status(400).json({
-                message: "login failed1"
+                message: "login failed"
             })
             return false
         }

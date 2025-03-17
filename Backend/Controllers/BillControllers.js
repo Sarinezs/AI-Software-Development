@@ -33,8 +33,8 @@ exports.create_bill = async (req, res) => {
         // console.log("⏳ Oldest Time:", formatDate(minTime));
         // console.log("⏰ Newest Time:", formatDate(maxTime));
 
-        const totalProfit = deals.reduce((sum, deal) => sum + deal.profit, 0)
-        console.log("Total Profit:", totalProfit)
+        // const totalProfit = deals.reduce((sum, deal) => sum + deal.profit, 0)
+        // console.log("Total Profit:", totalProfit)
 
         const start_date = formatDate(minTime);
         const end_date = formatDate(maxTime);
@@ -54,7 +54,7 @@ exports.create_bill = async (req, res) => {
         }
         else {
             console.log("No Bill found in range ", start_date, " - ", end_date);
-            // const totalProfit = 10000
+            const totalProfit = 10000
 
             if (totalProfit > 0) {
                 const service_fee = totalProfit * 0.01
@@ -102,6 +102,28 @@ exports.get_bills = async (req, res) => {
         const user = jwt.verify(authtoken, secret)
         // console.log(user)
         const [results] = await conn.query('SELECT * FROM Bill WHERE user_id =? AND status = ?', [user.user_id, 'unpaid'])
+
+        res.json({
+            bills: results
+        }).status(200)
+    } catch (error) {
+        res.json({
+            message: "Error getting bills",
+            error
+        })
+    }
+}
+
+exports.get_bills_history = async (req, res) => {
+    try {
+        const authheader = req.headers['authorization']
+        let authtoken = ''
+        if (authheader) {
+            authtoken = authheader.split(' ')[1]
+        }
+        const user = jwt.verify(authtoken, secret)
+        // console.log(user)
+        const [results] = await conn.query('SELECT * FROM Bill WHERE user_id =? AND status = ?', [user.user_id, 'complete'])
 
         res.json({
             bills: results
