@@ -1,18 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'
-import { extendTheme, styled } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
-import { AppProvider } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid2';
-import Sidebar from '../components/Sidebar';
 import './Admin.css'
-import Navbar from '../components/Navbar';
+
 
 const Admin = () => {
 
@@ -32,14 +22,44 @@ const Admin = () => {
         }
     }
 
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
+
+    // ✅ ฟังก์ชัน Sign Out
+    const handleSignOut = () => {
+        localStorage.removeItem('token');  // ลบ token
+        navigate('/signin'); // กลับไปหน้า Login
+    };
+
     return (
         <div className='admin-grid'>
             <div className="admin-sidebar">
-                {/* <Sidebar /> */}
-                <Navbar />
+                <div className='admin-user'>
+                    <img src="/user_icon.png" alt="User" className="admin-icon" onClick={toggleDropdown} />
+                    {isOpen && (
+                        <div className="admin-dropdown-menu">
+                            <button className="admin-dropdown-item signout-btn" onClick={handleSignOut}>Sign Out</button>
+                        </div>
+                    )}
+                </div>
+                <div className="admin-menu">
+
+                    <ul>
+                        <li>Dashboard</li>
+                    </ul>
+                </div>
             </div>
             <div className="admin-body">
-                <h1>test</h1>
+                <div class="box box1">
+                    <h2>Users</h2>
+                </div>
+                <div class="box box2">
+                    <h2>Income</h2>
+                </div>
             </div>
         </div>
     )
