@@ -5,6 +5,7 @@
 }
 
 .admin-sidebar {
+    position: sticky;
     font-size: 32px;
     border-right: 1px solid black;
     height: 100vh;
@@ -58,33 +59,53 @@
     margin-left: 10%;
 }
 
+.admin-bg {
+    background-color: #fff;
+}
+
+.admin-grid-header {
+    margin: 5% 0 0 8%;
+}
+
 .admin-body {
-    margin-top: 8%;
+    margin-top: 5%;
     margin-left: 8%;
     display: grid;
     grid-template-areas:
-        "box1 box2 box3";
+        "box1 box2 box3"
+        "graph graph graph";
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 5px;
+    gap: 50px;
 }
 
 .box1 {
     grid-area: box1;
-    background-color: #f2f2f2;
+    border-radius: 5%;
+    background-color: #3674B5;
     width: 250px;
     height: 150px;
+    padding: 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .box2 {
     grid-area: box2;
-    background-color: #f2f2f2;
+    border-radius: 5%;
+    background-color: #A0C878;
     width: 250px;
     height: 150px;
+    padding: 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.box3 {
-    grid-area: box3;
-    background-color: #f2f2f2;
-    width: 250px;
-    height: 150px;
+.graph {
+    grid-area: graph;
+    border: 10px solid #EEEEEE;
+    /* background-color: #EEEEEE; */
+    width: 1100px;
+
 }

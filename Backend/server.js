@@ -97,95 +97,6 @@ app.use('/createbill', express.json(), CreateBill)
 app.use('/payment', express.json(), Payment)
 
 
-// app.post('/register', async (req, res) => {
-//     try {
-//         const { username, email, password, confirm_password } = req.body
-//         if (password !== confirm_password) {
-//             res.json({
-//                 message: "password not match"
-//             })
-//             return false;
-//         }
-//         let hashedPassword = await bcrypt.hash(password, 10)
-//         const userdata = {
-//             username,
-//             email,
-//             password: hashedPassword,
-//             role: 'user',
-//         }
-//         const [ismember] = await conn.query('SELECT * FROM user WHERE email = ?', email)
-//         if (ismember.length !== 0) {
-//             res.json({
-//                 message: "email already exists"
-//             })
-//             return false;
-//         }
-//         const [result] = await conn.query('INSERT INTO user set ? ', userdata)
-//         res.json({
-//             message: 'insert success',
-//             result
-//         })
-//     } catch (error) {
-//         console.log('error', error)
-//         res.json({
-//             message: "insert error",
-//             error
-//         })
-//     }
-// })
-
-// app.post('/login', async (req, res) => {
-//     try {
-//         const { email, password } = req.body
-//         const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
-//         const userdata = result[0]
-//         const match = await bcrypt.compare(password, userdata.password)
-//         if (!match) { // รหัสตรงกันไหม
-//             res.status(400).json({
-//                 message: "login failed1"
-//             })
-//             return false
-//         }
-
-//         // สร้าง jwt token 
-//         let token = ""
-//         if (userdata.role === "admin") {
-//             token = jwt.sign({  user_id: userdata.user_id,
-//                                 username: userdata.username,
-//                                 email,
-//                                 role: 'admin' 
-//                              },
-//                             secret, 
-//                             { expiresIn: "1h" })
-//             // console.log('user data', userdata)
-//         }
-//         else { // user
-//             token = jwt.sign({  user_id: userdata.user_id,
-//                 username: userdata.username,
-//                 email,
-//                 role: 'user' 
-//              },
-//             secret, 
-//             { expiresIn: "1h" })
-//         }
-
-
-//         res.status(200).json({
-//             message: "login success",
-//             token,
-//             role: userdata.role
-
-//         })
-
-//     } catch (error) {
-//         console.log('login error', error)
-//         res.status(401).json({
-//             message: 'login falied',
-//             error
-//         })
-//     }
-// })
-
 app.post('/logout', async (req, res) => {
     try {
         req.session.destroy(function (err) {
@@ -235,31 +146,6 @@ app.get("/api/get-selected-model", async (req, res) => {
         console.log("selected model error: ", error)
     }
 });
-
-// app.post('/api/get-history', async (req, res) => {
-//     try {
-//         const { deals } = req.body;
-
-//         deals.forEach(deal => {
-//             // แปลง Unix Timestamp เป็นวันที่และเวลาใน GMT+7
-//             const date = new Date(deal.time * 1000); // คูณ 1000 เพราะ JS ใช้ milliseconds
-//             const options = { timeZone: 'Asia/Bangkok', hour12: false };
-
-//             // ใช้ Intl.DateTimeFormat เพื่อแสดงผลใน GMT+7
-//             const formattedDate = new Intl.DateTimeFormat('en-GB', {
-//                 year: 'numeric', month: '2-digit', day: '2-digit',
-//                 hour: '2-digit', minute: '2-digit', second: '2-digit',
-//                 timeZone: 'Asia/Bangkok'
-//             }).format(date);
-
-//             console.log(`${deal.dealTicket} GMT+7: ${formattedDate}`);
-//         });
-
-//         res.json(req.body);
-//     } catch (error) {
-//         console.log("get-history error", error);
-//     }
-// });
 
 
 // ระบบจ่ายเงิน

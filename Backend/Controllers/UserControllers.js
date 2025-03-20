@@ -15,7 +15,7 @@ exports.getUser = async (req, res) => {
         console.log(user)
         const [results] = await conn.query('SELECT * FROM user WHERE role = ?', ['user'])
         res.json({
-            users: results
+            users: results.length
         })
     } catch (error) {
         console.log('error', error)
