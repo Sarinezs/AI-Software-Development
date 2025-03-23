@@ -25,10 +25,10 @@ const Bills = ({ ishistory }) => {
     useEffect(() => {
         if (ishistory === false) {
             getbills()
-            console.log('bills')
+            // console.log('bills')
         } else {
             getbills_history()
-            console.log('bills_history')
+            // console.log('bills_history')
         }
         setModalOpen(false)
     }, [ishistory])
@@ -57,11 +57,11 @@ const Bills = ({ ishistory }) => {
             })
             const formattedBills = response.data.bills.map(bill => ({
                 ...bill,
-                start_date: bill.start_date.split('T')[0],  // ตัดเวลาออก
-                end_date: bill.end_date.split('T')[0]      // ตัดเวลาออก
+                start_date: bill.start_date.split(' ')[0],  // ตัดเวลาออก
+                end_date: bill.end_date.split(' ')[0]      // ตัดเวลาออก
             }));
 
-            // console.log(formattedBills.length);
+            console.log(response.data.bills);
             setBills(formattedBills);
         } catch (error) {
             console.log("get bill error: " + error)
@@ -78,8 +78,8 @@ const Bills = ({ ishistory }) => {
             })
             const formattedBills = response.data.bills.map(bill => ({
                 ...bill,
-                start_date: bill.start_date.split('T')[0],  // ตัดเวลาออก
-                end_date: bill.end_date.split('T')[0]      // ตัดเวลาออก
+                start_date: bill.start_date.split(' ')[0],  // ตัดเวลาออก
+                end_date: bill.end_date.split(' ')[0]      // ตัดเวลาออก
             }));
 
             // console.log(formattedBills.length);
@@ -107,7 +107,7 @@ const Bills = ({ ishistory }) => {
             <div className="bill-box">
                 <div className="bill-table">
                     <h1>
-                        {ishistory? 'History' : 'Bills'}
+                        {ishistory ? 'History' : 'Bills'}
                     </h1>
                     <br />
                     <Divider />
