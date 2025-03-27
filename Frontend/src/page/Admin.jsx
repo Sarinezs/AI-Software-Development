@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { LineChart } from '@mui/x-charts/LineChart';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';

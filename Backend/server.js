@@ -4,7 +4,6 @@ const mysql = require('mysql2/promise')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require("uuid");
 
 require('dotenv').config();

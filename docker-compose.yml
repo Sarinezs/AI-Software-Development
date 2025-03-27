@@ -1,40 +1,57 @@
 version: '3.9'
 services:
-  # node-frontend:
-  #   container_name: frontend
-  #   build: ./Frontend
-  #   ports:
-  #     - "5173:5173"
+    node-frontend:
+        container_name: frontend
+        build: ./Frontend
+        ports:
+            - "5173:5173"
 
-  # node-server:
-  #   container_name: node
-  #   build: .
-  #   ports:
-  #     - "8000:8000"
+    node-server:
+        container_name: server
+        build: ./Backend
+        ports:
+            - "8000:8000"
 
-  db:
-    image: mysql:latest
-    container_name: db
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
+    db:
+        image: mysql:latest
+        container_name: db
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: test
+        ports:
+            - "3306:3306"
+        volumes:
+            - db_data:/var/lib/mysql
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: root
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: phpmyadmin
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            PMA_USER: root
+            PMA_PASSWORD: root
+        ports:
+            - "8080:80"
+        depends_on:
+            - db
+
+    stripe-listener:
+        image: stripe/stripe-cli:latest
+        container_name: stripe-listener
+        environment:
+            - STRIPE_API_KEY=sk_test_51QauyQGRBGrifrDfsYSl5H0IeoB8PtJeNYz6eS1cvOfQv0W8ZZSq3jcRpH78uxEH6KCGIyhLzRBlvo4gSU4CdhAK005hm4oizZ
+        command: [ "listen", "--forward-to", "localhost:8000/webhook" ]
+        network_mode: "host"
+        depends_on:
+            - node-server
+
+    model:
+        container_name: model
+        build: ./Model
+        ports:
+            - "5555:5555"
+        # restart: always
 
 volumes:
-  db_data:
+    db_data:

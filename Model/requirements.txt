@@ -1,0 +1,7 @@
+stable-baselines3
+gym
+torch
+numpy
+pandas
+ta
+pyzmq

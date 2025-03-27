@@ -6,9 +6,9 @@ COPY /package.json ./
 
 RUN npm install
 
-COPY ./server.js ./
+COPY ./ ./
 
 EXPOSE 8000
 
-CMD [ "node", "./server.js" ]
+CMD [ "npm", "start" ]
 

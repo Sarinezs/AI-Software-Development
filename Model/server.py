@@ -7,6 +7,7 @@ import ta  # ใช้ pandas-ta
 # โหลดโมเดล AI
 best_model = PPO.load('./best_model2/best_model.zip') #ข้อมูลย้อนหลัง 1 ปี
 
+
 def main():
     context = zmq.Context()
     socket = context.socket(zmq.REP)

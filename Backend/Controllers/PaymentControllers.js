@@ -1,7 +1,4 @@
 const conn = require('../DB')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const secret = 'mysecret'
 const { v4: uuidv4 } = require("uuid");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = 'whsec_cc88b8668d31645b3abc9fc30b05b88c880b9566e5ba51d3ea4652bf1e2590a0111';

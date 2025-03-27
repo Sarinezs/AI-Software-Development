@@ -1,5 +1,5 @@
 const conn = require('../DB')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 const jwt = require('jsonwebtoken')
 
@@ -34,7 +34,7 @@ exports.register = async (req, res) => {
             result
         })
     } catch (error) {
-        console.log('error', error)
+        console.log('registeration error', error)
         res.json({
             message: "insert error",
             error
@@ -47,6 +47,7 @@ exports.login = async (req, res) => {
         const { email, password } = req.body
         const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
         const userdata = result[0]
+        console.log(userdata)
         const match = await bcrypt.compare(password, userdata.password)
         if (!match) { // รหัสตรงกันไหม
             res.status(400).json({
@@ -88,7 +89,7 @@ exports.login = async (req, res) => {
         })
 
     } catch (error) {
-        // console.log('login error', error)
+        console.log('login error', error)
         res.status(401).json({
             message: 'login falied',
             error
