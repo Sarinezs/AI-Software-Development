@@ -10,7 +10,6 @@ require('dotenv').config();
 
 
 
-
 const UserRoutes = require('./Routes/UserRoutes')
 const AuthRoutes = require('./Routes/AuthRoutes')
 const MT5Routes = require('./Routes/MT5Routes')
@@ -18,6 +17,7 @@ const ConnectModel = require('./Routes/ConnectModel')
 const GetHist = require('./Routes/GetHistoryRoutes')
 const CreateBill = require('./Routes/BillRoutes')
 const Payment = require('./Routes/PaymentRoutes')
+const FileRoutes = require('./Routes/FileRoutes')
 
 const conn = require('./DB')
 
@@ -94,6 +94,7 @@ app.use('/model', express.json(), ConnectModel)
 app.use('/get-history', express.json(), GetHist)
 app.use('/createbill', express.json(), CreateBill)
 app.use('/payment', express.json(), Payment)
+app.use('/download', express.json(), FileRoutes)
 
 
 app.post('/logout', async (req, res) => {

@@ -8,7 +8,7 @@ exports.create_bill = async (req, res) => {
         const { StartMonth, EndMonth, token, deals } = req.body
 
         const [account] = await conn.query('SELECT user_id, mt5_accountid FROM mt5_account WHERE token = ?', token)
-        console.log(account[0].user_id, account[0].mt5_accountid)
+        // console.log(account[0].user_id, account[0].mt5_accountid)
 
         const [existingBill] = await conn.query(
             `SELECT * FROM Bill 
@@ -18,12 +18,16 @@ exports.create_bill = async (req, res) => {
             LIMIT 1`,
             [account[0].user_id, account[0].mt5_accountid, StartMonth, EndMonth]
         );
-        let sum = 0
+        let sum = 0.00
         deals.map(row => {
+            // console.log(row.profit)
             sum += row.profit
         })
+        console.log(" ")
         const totalProfit = sum
-        console.log(deals[0])
+        console.log("First Deal : ",deals[0])
+        console.log("Last Deal : ",deals[deals.length - 1])
+        console.log("Income : ", totalProfit)
 
 
         if (existingBill.length > 0) {
@@ -79,10 +83,10 @@ exports.get_bills = async (req, res) => {
         const user = jwt.verify(authtoken, secret)
         // console.log(user)
         const [results] = await conn.query('SELECT * FROM Bill WHERE user_id =? AND status = ?', [user.user_id, 'unpaid'])
-        results.forEach(row => {
-            row.start_date = moment.utc(row.start_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
-            row.end_date = moment.utc(row.end_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
-        });
+        // results.forEach(row => {
+        //     row.start_date = moment.utc(row.start_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
+        //     row.end_date = moment.utc(row.end_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
+        // });
         // console.log(results)
         res.json({
             bills: results
@@ -106,10 +110,10 @@ exports.get_bills_history = async (req, res) => {
         const user = jwt.verify(authtoken, secret)
         // console.log(user)
         const [results] = await conn.query('SELECT * FROM Bill WHERE user_id =? AND status = ?', [user.user_id, 'complete'])
-        results.forEach(row => {
-            row.start_date = moment.utc(row.start_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
-            row.end_date = moment.utc(row.end_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
-        });
+        // results.forEach(row => {
+        //     row.start_date = moment.utc(row.start_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
+        //     row.end_date = moment.utc(row.end_date).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
+        // });
         res.json({
             bills: results
         }).status(200)

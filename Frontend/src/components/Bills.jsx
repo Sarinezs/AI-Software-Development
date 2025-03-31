@@ -57,8 +57,8 @@ const Bills = ({ ishistory }) => {
             })
             const formattedBills = response.data.bills.map(bill => ({
                 ...bill,
-                start_date: bill.start_date.split(' ')[0],  // ตัดเวลาออก
-                end_date: bill.end_date.split(' ')[0]      // ตัดเวลาออก
+                start_date: bill.start_date.split('T')[0],  // ตัดเวลาออก
+                end_date: bill.end_date.split('T')[0]      // ตัดเวลาออก
             }));
 
             console.log(response.data.bills);
@@ -78,8 +78,8 @@ const Bills = ({ ishistory }) => {
             })
             const formattedBills = response.data.bills.map(bill => ({
                 ...bill,
-                start_date: bill.start_date.split(' ')[0],  // ตัดเวลาออก
-                end_date: bill.end_date.split(' ')[0]      // ตัดเวลาออก
+                start_date: bill.start_date.split('T')[0],  // ตัดเวลาออก
+                end_date: bill.end_date.split('T')[0]      // ตัดเวลาออก
             }));
 
             // console.log(formattedBills.length);

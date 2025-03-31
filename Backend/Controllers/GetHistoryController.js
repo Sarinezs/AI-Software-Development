@@ -5,7 +5,7 @@ const secret = 'mysecret'
 exports.get_history = async (req, res) => {
     try {
         const { StartMonth, EndMonth, token, deals } = req.body;
-        console.log(deals)
+        // console.log(deals)
        
         const createBillResponse = await fetch("http://localhost:8000/createbill", {
             method: "POST",

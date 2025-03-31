@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
         const { email, password } = req.body
         const [result] = await conn.query('SELECT * FROM user WHERE email = ?', email)
         const userdata = result[0]
-        console.log(userdata)
+        // console.log(userdata)
         const match = await bcrypt.compare(password, userdata.password)
         if (!match) { // รหัสตรงกันไหม
             res.status(400).json({

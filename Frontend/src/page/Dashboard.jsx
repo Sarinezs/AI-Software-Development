@@ -243,6 +243,31 @@ const Dashboard = () => {
 		handleCloseModal();
 	};
 
+	const handleDownload = async () => {
+
+		try {
+			const url = `http://localhost:8000/download`;
+			const token = localStorage.getItem('token');
+			const response = await axios.get(url, {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				},
+				responseType: "blob", // ทำให้ Axios รับ response เป็นไฟล์
+			});
+
+			// สร้างลิงก์ดาวน์โหลด
+			const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+			const link = document.createElement("a");
+			link.href = downloadUrl;
+			link.setAttribute("download", "TradeX.mq5"); // ตั้งชื่อไฟล์
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		} catch (error) {
+			console.error("Download error:", error);
+		}
+	};
+
 	return (
 
 		<div>
@@ -251,7 +276,9 @@ const Dashboard = () => {
 				<div className='item1'>
 					<div className='mt5-btn'>
 						{/* <Button onClick={handleOpen}>Add MT5 Account</Button> */}
-						<Button variant="contained" style={{ backgroundColor: "#fff", color: "#000" }} onClick={handleOpen}>Add MT5 Account</Button>
+						<Button variant="contained" style={{ backgroundColor: "#fff", color: "#000", marginBottom: "10px" }} onClick={handleOpen}>Add MT5 Account</Button>
+						<br />
+						<Button variant="contained" style={{ backgroundColor: "#fff", color: "#000" }} onClick={handleDownload}>download EA</Button>
 						<Modal
 							aria-labelledby="transition-modal-title"
 							aria-describedby="transition-modal-description"
