@@ -44,7 +44,6 @@ app.use('/payment', express.json(), Payment)
 app.use('/download', express.json(), FileRoutes)
 
 
-
 app.post('/logout', async (req, res) => {
     try {
         req.session.destroy(function (err) {
