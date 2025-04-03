@@ -22,9 +22,18 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-    - name: Build and Push Docker Image
+    # 🔹 Build & Push Backend
+    - name: Build and Push Backend Image
       uses: docker/build-push-action@v3
       with:
-        context: .
+        context: ./Backend    # 📌 ตำแหน่งของ Dockerfile สำหรับ Backend
         push: true
-        tags: sarinez/tradex:latest
+        tags: sarinez/tradex-backend:latest
+
+    # 🔹 Build & Push Frontend
+    - name: Build and Push Frontend Image
+      uses: docker/build-push-action@v3
+      with:
+        context: ./Frontend    # 📌 ตำแหน่งของ Dockerfile สำหรับ Frontend
+        push: true
+        tags: sarinez/tradex-frontend:latest
