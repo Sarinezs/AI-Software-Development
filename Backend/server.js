@@ -1,14 +1,8 @@
 const express = require('express')
 const cors = require('cors')
-const mysql = require('mysql2/promise')
-const jwt = require('jsonwebtoken')
-const cookieParser = require('cookie-parser')
-const session = require('express-session')
 const { v4: uuidv4 } = require("uuid");
 
 require('dotenv').config();
-
-
 
 const UserRoutes = require('./Routes/UserRoutes')
 const AuthRoutes = require('./Routes/AuthRoutes')
@@ -18,6 +12,8 @@ const GetHist = require('./Routes/GetHistoryRoutes')
 const CreateBill = require('./Routes/BillRoutes')
 const Payment = require('./Routes/PaymentRoutes')
 const FileRoutes = require('./Routes/FileRoutes')
+
+const { swaggerUi, swaggerSpec } = require('./swaggerconfig')
 
 const conn = require('./DB')
 
@@ -30,62 +26,13 @@ app.use(cors(
         origin: ['http://localhost:5173']
     }
 ))
-app.use(cookieParser())
-
-app.use(session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: true,
-}))
 
 const port = 8000
-const secret = 'mysecret'
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = 'whsec_cc88b8668d31645b3abc9fc30b05b88c880b9566e5ba51d3ea4652bf1e2590a0';
 
-// let conn = null
-// var text = ''
-
-// const connectMySQL = async () => {
-//     try {
-//         conn = await mysql.createConnection({
-//             host: 'localhost', // docker : db
-//             user: 'root',
-//             password: 'root',
-//             database: 'test',
-//         });
-//         text = 'Connected to MySQL!'
-//         console.log('Connected to MySQL!');
-//     } catch (err) {
-//         text = 'Error connecting to MySQL:' + err
-//         console.error('Error connecting to MySQL:', err);
-//     }
-// }
-
-
-// app.get('/user', async (req, res) => {
-//     try {
-//         const authheader = req.headers['authorization']
-//         let authtoken = ''
-//         if (authheader) {
-//             authtoken = authheader.split(' ')[1]
-//         }
-//         // console.log(authtoken)
-//         const user = jwt.verify(authtoken, secret)
-//         // console.log(user)
-//         const [results] = await conn.query('SELECT * FROM user')
-//         res.json({
-//             users: results
-//         })
-//     } catch (error) {
-//         console.log('error', error)
-//         res.status(403).json({
-//             message: 'authentication fail',
-//             error
-//         })
-//     }
-// })
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/user', express.json(), UserRoutes)
 app.use('/auth', express.json(), AuthRoutes)
@@ -95,6 +42,7 @@ app.use('/get-history', express.json(), GetHist)
 app.use('/createbill', express.json(), CreateBill)
 app.use('/payment', express.json(), Payment)
 app.use('/download', express.json(), FileRoutes)
+
 
 
 app.post('/logout', async (req, res) => {
@@ -171,8 +119,8 @@ app.post('/api/checkout', async (req, res) => {
             success_url: `http://localhost:5173/Dashboard`,
             cancel_url: `http://localhost:8888/cancel.html?id=${orderId}`,
         });
-// cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
-// cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
+        // cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
+        // cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
         console.log(session)
         res.json(req.body)
     } catch (error) {
@@ -220,7 +168,5 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
     res.send();
 });
 app.listen(port, async () => {
-    // await connectMySQL()
-    // console.log(conn)
     console.log('Server running at http://localhost:' + port)
 })

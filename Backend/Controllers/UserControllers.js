@@ -54,17 +54,3 @@ exports.getLoggedInUser = async (req, res) => {
         })
     }
 }
-
-exports.test = async (req, res) => {
-    try {
-        console.log("test")
-        res.status(200).json({
-            message: 'test success',
-        })
-    } catch (error) {
-        res.status(404).json({
-            message: 'test fail',
-            error
-        })
-    }
-}
