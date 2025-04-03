@@ -38,7 +38,7 @@ jobs:
         push: true
         tags: sarinez/tradex-frontend:latest
 
-    - name: Build and Push Frontend Image
+    - name: Build and Push Model Image
       uses: docker/build-push-action@v3
       with:
         context: ./Model    # 📌 ตำแหน่งของ Dockerfile สำหรับ Model
