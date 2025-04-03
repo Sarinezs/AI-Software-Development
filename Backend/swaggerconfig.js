@@ -9,9 +9,8 @@ const swaggerDefinition = {
     },
     servers:[
         {
-            url:'http//localhost:8000',
-            description: 'tradeX API'
-        }
+            url: "http://localhost:8000"
+        },
     ]
 };
 

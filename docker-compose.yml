@@ -1,16 +1,16 @@
 version: '3.9'
 services:
-    # node-frontend:
-    #     container_name: frontend
-    #     build: ./Frontend
-    #     ports:
-    #         - "5173:5173"
+    node-frontend:
+        container_name: frontend
+        build: ./Frontend
+        ports:
+            - "5173:5173"
 
-    # node-server:
-    #     container_name: server
-    #     build: ./Backend
-    #     ports:
-    #         - "8000:8000"
+    node-server:
+        container_name: server
+        build: ./Backend
+        ports:
+            - "8000:8000"
 
     db:
         image: mysql:latest
@@ -38,22 +38,22 @@ services:
         depends_on:
             - db
 
-    # stripe-listener:
-    #     image: stripe/stripe-cli:latest
-    #     container_name: stripe-listener
-    #     env_file: /Backend/.env
-    #     environment:
-    #         - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
-    #     command: [ "listen", "--forward-to", "localhost:8000/webhook" ]
-    #     network_mode: "host"
-    #     depends_on:
-    #         - node-server
+    stripe-listener:
+        image: stripe/stripe-cli:latest
+        container_name: stripe-listener
+        env_file: /Backend/.env
+        environment:
+            - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
+        command: [ "listen", "--forward-to", "localhost:8000/webhook" ]
+        network_mode: "host"
+        depends_on:
+            - node-server
 
-    # model:
-    #     container_name: model
-    #     build: ./Model
-    #     ports:
-    #         - "5555:5555"
+    model:
+        container_name: model
+        build: ./Model
+        ports:
+            - "5555:5555"
 
 volumes:
     db_data:

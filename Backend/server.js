@@ -97,37 +97,6 @@ app.get("/api/get-selected-model", async (req, res) => {
 
 
 // ระบบจ่ายเงิน
-app.post('/api/checkout', async (req, res) => {
-    const { bill } = req.body
-    try {
-        const orderId = uuidv4();
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            line_items: [
-                {
-                    price_data: {
-                        currency: "thb",
-                        product_data: {
-                            name: "Robot trade's services fee",
-                        },
-                        unit_amount: bill.amount * 100,
-                    },
-                    quantity: 1,
-                },
-            ],
-            mode: "payment",
-            success_url: `http://localhost:5173/Dashboard`,
-            cancel_url: `http://localhost:8888/cancel.html?id=${orderId}`,
-        });
-        // cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
-        // cs_test_a1IAvUlYsASkWyLB8KY7RtRrahaPtTYzYIwnAAJlJy1piGrNS8QvFZDtny
-        console.log(session)
-        res.json(req.body)
-    } catch (error) {
-        console.log("error")
-    }
-})
-
 app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
     const sig = req.headers["stripe-signature"];
     let event;
