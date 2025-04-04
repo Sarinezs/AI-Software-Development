@@ -44,3 +44,15 @@ jobs:
         context: ./Model    # 📌 ตำแหน่งของ Dockerfile สำหรับ Model
         push: true
         tags: sarinez/tradex-model:latest
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          cd ../..
+          git pull origin main
+          docker-compose down
+          docker-compose up -d --build
