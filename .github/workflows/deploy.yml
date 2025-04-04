@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout Code
@@ -21,6 +21,8 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        script: |
+          pwd
 
     # 🔹 Build & Push Backend
     - name: Build and Push Backend Image
@@ -45,14 +47,14 @@ jobs:
         push: true
         tags: sarinez/tradex-model:latest
 
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        script: |
-          cd ../..
-          git pull origin main
-          docker-compose down
-          docker-compose up -d --build
+    # - name: Deploy via SSH
+    #   uses: appleboy/ssh-action@v0.1.6
+    #   with:
+    #     host: ${{ secrets.SERVER_IP }}
+    #     username: ${{ secrets.SERVER_USER }}
+    #     key: ${{ secrets.SERVER_SSH_KEY }}
+    #     script: |
+    #       cd ../..
+    #       git pull origin main
+    #       docker-compose down
+    #       docker-compose up -d --build
