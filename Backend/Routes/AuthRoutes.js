@@ -175,7 +175,7 @@ router.post('/login', AuthController.login)
 
 /**
  * @swagger
- * /auth/updateuser:
+ * /auth/update:
  *   put:
  *     summary: Update user profile
  *     description: อัปเดตข้อมูลผู้ใช้ (username, email)

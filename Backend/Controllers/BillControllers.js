@@ -6,9 +6,9 @@ const moment = require('moment-timezone');
 exports.create_bill = async (req, res) => {
     try {
         const { StartMonth, EndMonth, token, deals } = req.body
-
+        // console.log(token)
         const [account] = await conn.query('SELECT user_id, mt5_accountid FROM mt5_account WHERE token = ?', token)
-        // console.log(account[0].user_id, account[0].mt5_accountid)
+        console.log(account)
 
         const [existingBill] = await conn.query(
             `SELECT * FROM Bill 
@@ -18,13 +18,13 @@ exports.create_bill = async (req, res) => {
             LIMIT 1`,
             [account[0].user_id, account[0].mt5_accountid, StartMonth, EndMonth]
         );
-        let sum = 0.00
-        deals.map(row => {
-            // console.log(row.profit)
-            sum += row.profit
-        })
-        console.log(" ")
-        const totalProfit = sum
+        // let sum = 0.00
+        // deals.map(row => {
+        //     // console.log(row.profit)
+        //     sum += row.profit
+        // })
+        // console.log(" ")
+        const totalProfit = 10000
         console.log("First Deal : ",deals[0])
         console.log("Last Deal : ",deals[deals.length - 1])
         console.log("Income : ", totalProfit)

@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const { v4: uuidv4 } = require("uuid");
 
+const createTables = require('./CreateTable')
 require('dotenv').config();
 
 const UserRoutes = require('./Routes/UserRoutes')
@@ -136,5 +137,6 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
     res.send();
 });
 app.listen(port, async () => {
+    await createTables()
     console.log('Server running at http://localhost:' + port)
 })

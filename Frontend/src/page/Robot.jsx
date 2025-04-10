@@ -6,6 +6,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Button from '@mui/material/Button';
 const Robot = () => {
 
 	const [userdata, setUserdata] = useState({});
@@ -64,8 +65,8 @@ const Robot = () => {
 					'Authorization': `Bearer ${token}`
 				}
 			})
-			console.log(response.data.result)
 			setModel_name(response.data.result)
+			console.log(model_name)
 		} catch (error) {
 			console.log(error.response)
 		}
@@ -94,7 +95,7 @@ const Robot = () => {
 	return (
 		<div>
 			<Navbar />
-			<div style={{ display: "flex", flexWrap: "wrap", gap: "20px", margin: "5% 0 0 8%"}}>
+			<div style={{ display: "flex", flexWrap: "wrap", gap: "20px", margin: "5% 0 0 8%" }}>
 				<div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px" }}>
 					<h1>Select Model</h1>
 					<br />
@@ -106,11 +107,12 @@ const Robot = () => {
 								defaultValue={"qqq"}
 								onChange={(event) => handleChange("model_id", event)}
 							>
-								{model_name.map((option) => ( // ✅ วนลูปสร้าง MenuItem
-									<MenuItem value={option.model_id}>
-										{option.model_name}
-									</MenuItem>
-								))}
+								{model_name?.length > 0 &&
+									model_name.map((option) => (
+										<MenuItem key={option.model_id} value={option.model_id}>
+											{option.model_name}
+										</MenuItem>
+									))}
 							</Select>
 						</FormControl>
 					</Box>
@@ -123,18 +125,19 @@ const Robot = () => {
 								defaultValue={"qqq"}
 								onChange={(event) => handleChange("token", event)}
 							>
-								{mt5account.map((option) => ( // ✅ วนลูปสร้าง MenuItem
-									<MenuItem value={option.token}>
-										{option.mt5_accountid}
-									</MenuItem>
-								))}
+								{mt5account?.length > 0 &&
+									mt5account.map((option) => ( // ✅ วนลูปสร้าง MenuItem
+										<MenuItem value={option.token}>
+											{option.mt5_accountid}
+										</MenuItem>
+									))}
 							</Select>
 						</FormControl>
 					</Box>
 				</div>
 
 			</div>
-			<button style={{margin: "1% 0 0 8%"}} onClick={connectmodel}>connect</button>
+			<Button style={{ margin: "1% 0 0 8%" }} variant="contained" onClick={connectmodel}>connect</Button>
 		</div>
 	)
 }

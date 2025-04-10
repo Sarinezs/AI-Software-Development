@@ -29,7 +29,7 @@ services:
         container_name: phpmyadmin
         # env_file: ./Backend/.env
         environment:
-            PMA_HOST: ${DB_host}
+            PMA_HOST: db #${DB_host}
             PMA_PORT: ${DB_port}
             PMA_USER: ${DB_user}
             PMA_PASSWORD: ${DB_password}
