@@ -23,36 +23,31 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
     # 🔹 Build & Push Backend
-    - name: Build and Push Backend Image
-      uses: docker/build-push-action@v3
-      with:
-        context: ./Backend    # 📌 ตำแหน่งของ Dockerfile สำหรับ Backend
-        push: true
-        tags: sarinez/tradex-backend:latest
-
-    # 🔹 Build & Push Frontend
-    - name: Build and Push Frontend Image
-      uses: docker/build-push-action@v3
-      with:
-        context: ./Frontend    # 📌 ตำแหน่งของ Dockerfile สำหรับ Frontend
-        push: true
-        tags: sarinez/tradex-frontend:latest
-
-    - name: Build and Push Model Image
-      uses: docker/build-push-action@v3
-      with:
-        context: ./Model    # 📌 ตำแหน่งของ Dockerfile สำหรับ Model
-        push: true
-        tags: sarinez/tradex-model:latest
-
-    # - name: Deploy via SSH
-    #   uses: appleboy/ssh-action@v0.1.6
+    # - name: Build and Push Backend Image
+    #   uses: docker/build-push-action@v3
     #   with:
-    #     host: ${{ secrets.SERVER_IP }}
-    #     username: ${{ secrets.SERVER_USER }}
-    #     key: ${{ secrets.SERVER_SSH_KEY }}
-    #     script: |
-    #       cd ../..
-    #       git pull origin main
-    #       docker-compose down
-    #       docker-compose up -d --build
+    #     context: ./Backend    # 📌 ตำแหน่งของ Dockerfile สำหรับ Backend
+    #     push: true
+    #     tags: sarinez/tradex-backend:latest
+
+    # # 🔹 Build & Push Frontend
+    # - name: Build and Push Frontend Image
+    #   uses: docker/build-push-action@v3
+    #   with:
+    #     context: ./Frontend    # 📌 ตำแหน่งของ Dockerfile สำหรับ Frontend
+    #     push: true
+    #     tags: sarinez/tradex-frontend:latest
+
+    # - name: Build and Push Model Image
+    #   uses: docker/build-push-action@v3
+    #   with:
+    #     context: ./Model    # 📌 ตำแหน่งของ Dockerfile สำหรับ Model
+    #     push: true
+    #     tags: sarinez/tradex-model:latest
+
+    - name: Deploy with Docker Compose
+      run: |
+        docker compose down
+        docker compose pull
+        docker compose up -d --build
+
